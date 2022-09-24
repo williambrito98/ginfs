@@ -1,0 +1,163 @@
+.bg-black {
+    background-color: #262626;
+}
+
+.bg-btn-yellow {
+    background-color: #fcd34d;
+}
+
+.bg-btn-header-yellow {
+    background-color: #fde68a;
+}
+
+.bg-btn-dropdown-client,
+.bg-grey-darker {
+    background-color: #d1d5db;
+}
+
+.bg-table,
+.bg-grey {
+    background-color: #e5e7eb;
+}
+
+.color-header-table,
+.color-text-grey {
+    color: #5c5c5c;
+}
+
+.bg-green-56CA11 {
+    background-color: rgba(86, 202, 17, 0.5);
+}
+
+.bg-red-E32626 {
+    background-color: rgba(227, 38, 38, 0.5);
+}
+
+.logo {
+    width: 250px;
+    margin: 0 auto;
+}
+
+.text-yellow-custom-login {
+    color: #fde68a;
+}
+
+.container-login {
+    width: 350px;
+    margin: 0 20px;
+}
+.logo_header {
+    width: 150px;
+}
+
+.active {
+    background-color: #fbbe44;
+}
+
+input:focus {
+    outline: 2px solid #fbbe44;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 30px;
+}
+
+.bg-FCD34D {
+    background-color: #fcd34d;
+}
+
+.flex-basis-33 {
+    flex-basis: 33%;
+}
+
+.flex-basis-50 {
+    flex-basis: 50%;
+}
+
+.flex-basis-45 {
+    flex-basis: 45%;
+}
+
+.text-5C5C5C {
+    color: #5c5c5c;
+}
+.dropdown {
+    position: relative;
+}
+
+.border-input {
+    border: 2px solid #e5e7eb;
+}
+
+.border-error {
+    border: 1px solid rgb(220, 38, 38) !important;
+}
+
+.bg-alert-sucess {
+    background-color: #2fb13f;
+}
+
+.bg-alert-error {
+    background-color: #ff0b0b;
+}
+
+.top-5\\5 {
+    top: 5.5rem;
+}
+
+.top-40 {
+    top: -40px;
+}
+
+.label-after {
+    position: relative;
+    border-bottom: 4px solid #c4c4c4;
+    padding: 6px 0;
+    letter-spacing: 1px;
+}
+
+.menu-main {
+    width: 150px;
+}
+
+.border-top {
+    border-top: 1px solid #d1d5db;
+}
+
+.ui-menu-item {
+    cursor: pointer;
+    border-bottom: 1px solid #000;
+    padding: 10px 0 10px 10px;
+    position: relative;
+    left: 12px;
+}
+
+.ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content.ui-corner-all {
+    max-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-color: white;
+    padding-bottom: 12px;
+}
+
+.ui-datepicker-calendar {
+    display: none;
+}
+
+.border-effect {
+    display: inline-block;
+    margin: 0;
+}
+
+.border-effect:after {
+    display: block;
+    content: "";
+    border-bottom: solid 2px #fde68a;
+    transform: scaleX(0);
+    transition: transform 500ms ease-in-out;
+}
+
+.border-effect:hover:after {
+    transform: scaleX(1);
+}

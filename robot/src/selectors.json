@@ -1,0 +1,78 @@
+{
+    "login": {
+        "btn_forma_acesso_cnpj": ".loginNfse form > fieldset > div > div > span:nth-child(2) input",
+        "cnpj": ".loginNfse form fieldset:nth-child(2) > div > div > div:nth-child(2) input",
+        "senha": ".loginNfse form fieldset:nth-child(2) > div > div > div:nth-child(4) input",
+        "entrar": ".loginNfse form > table > tbody > tr > td:nth-child(1) button"
+    },
+    "btn_emitir": ".moldura tr td:nth-child(1) table tbody tr td table tbody tr:nth-child(2) div.x-panel-body div:nth-child(1) div:nth-child(2) div div:nth-child(1) a",
+    "fieldsets_tomador": {
+        "selector": ".medidaSelecione + fieldset div div fieldset",
+        "title": ".medidaSelecione + fieldset div div fieldset:nth-child(:index) legend span"
+    },
+    "fieldsets_resumo": {
+        "selector": ".medidaInforme + div > div > div",
+        "sub_selector": "fieldset",
+        "prestacao_servico": {
+            "competencia": "div.x-fieldset-bwrap > div > div:nth-child(1) > div > div > div > div:nth-child(1) input"
+        },
+        "discrimicanao_servico":  {
+            "codigo_servico_atividade": "div.x-fieldset-bwrap > div > div:nth-child(1) > div > div > div > div:nth-child(1) input",
+            "aliquota": "div.x-fieldset-bwrap > div > div:nth-child(1) > div > div > div > div:nth-child(2) input",
+            "descricao_servico": "div.x-fieldset-bwrap > div > div:nth-child(2) textarea"
+        },
+        "valores": {
+            "valor_servico_prestado": "div.x-fieldset-bwrap > div > div > div > div > div > div input"
+        }
+    },
+    "tomador": {
+        "inputSelector": ".medidaSelecione + fieldset div div fieldset:nth-child(1) div > div > table > tbody > tr:nth-child(2) input",
+        "buttonSelector": ".medidaSelecione + fieldset div div fieldset:nth-child(1) div > div > table > tbody > tr:nth-child(2) button"
+    },
+    "btn_next": ".centroBack > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr > td > table > tbody > tr > td > div > div:nth-child(2) > div > div > div > div > table:nth-child(2) button",
+    "fieldsets_servicos": {
+        "selector": ".medidaInforme + div form fieldset",
+        "title": ".medidaInforme + div form fieldset:nth-child(:index) > legend span",
+        "servicos_not_listed": ".medidaInforme + div form fieldset:nth-child(3) > div > div > div > div > div > div> div > div img",
+        "box_services_not_listed": "div.x-layer.x-combo-list"
+    },
+    "competencia": {
+        "day": {
+            "input": ".medidaInforme + div form fieldset:nth-child(1) > div div.x-panel.x-panel-noborder.x-form-label-top.x-column:nth-child(1) input",
+            "index": "2"
+        },
+        "month": {
+            "input": ".medidaInforme + div form fieldset:nth-child(1) > div div.x-panel.x-panel-noborder.x-form-label-top.x-column:nth-child(2) input",
+            "index": "1"
+        },
+        "year": {
+            "input": ".medidaInforme + div form fieldset:nth-child(1) > div div.x-panel.x-panel-noborder.x-form-label-top.x-column:nth-child(3) input",
+            "index": "0"
+        },
+        "select": "div.x-layer.x-combo-list"
+    },
+    "localPrestacao": {
+        "inputEstado": ".medidaInforme + div form fieldset:nth-child(2) > div div.x-panel.x-panel-noborder.x-form-label-top.x-column:nth-child(1) input",
+        "inputCidade": ".medidaInforme + div form fieldset:nth-child(2) > div div.x-panel.x-panel-noborder.x-form-label-top.x-column:nth-child(2) input"
+    },
+    "discriminacao_servicos": {
+        "btn_list_services": ".medidaInforme + div form fieldset:nth-child(3) > div > div > div:first-child > div > div > div > div:nth-child(2) div.gwt-PushButton",
+        "modal": {
+            "inputSearch": "div.x-window.x-resizable-pinned > div:nth-child(2) > div > div > div > div > div > div > div > form > fieldset input",
+            "buttonSearch" : "div.x-window.x-resizable-pinned > div:nth-child(2) > div > div > div > div > div > div > div > form > fieldset button",
+            "optionsServicos":  "div.x-window.x-resizable-pinned > div:nth-child(2) > div > div > div > div > div > div > div > form > div > div:last-child > div > div > div > div:last-child > div > div",
+            "codigoAndAtividade": "div.x-window.x-resizable-pinned > div:nth-child(2) > div > div > div > div > div > div > div > form > div > div:last-child > div > div > div > div:last-child > div > div:nth-child(:index) > table > tbody > tr > td:nth-child(2)",
+            "divScroll": "div.x-window.x-resizable-pinned > div:nth-child(2) > div > div > div > div > div > div > div > form  > div > div:last-child > div > div > div > div:last-child"
+        },
+        "aliquota": ".medidaInforme + div form fieldset:nth-child(3) > div > div > div:first-child > div > div > div > div:nth-child(4) input",
+        "descricao": ".medidaInforme + div form fieldset:nth-child(3) > div > div > div:nth-child(2) textarea"
+    },
+    "valores":{
+        "inputValorServico" : ".medidaInforme + div form fieldset:nth-child(5) > div > div > div > div > div > div > div input"
+    },
+    "btn_next_step": ".medidaInforme + div form > table > tbody > tr > td:nth-child(2) button",
+    "btn_emitir_nota": ".centroBack div.x-tab-panel-bwrap > div > div:last-child form > table:last-child > tbody > tr > td:nth-child(2) button",
+    "modal_numNota_codVerificacao": "#ext-comp-1011 > div.x-window-bwrap > div > div > div > div > div > div:nth-child(2) > span",
+    "modal_button_ok": "#ext-comp-1011 > div.x-window-bwrap > div:last-child button",
+    "download_pdf": ".corpo > tbody > tr > td:last-child > table > tbody > tr > td:nth-child(2) > a"
+}
