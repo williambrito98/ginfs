@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Crypt;
-use PhpParser\Node\Stmt\TryCatch;
 
 class ControllerUser extends Controller
 {
@@ -47,7 +46,7 @@ class ControllerUser extends Controller
         $roles = Roles::where('nome', '!=', 'cliente')->get();
         $breadCrumbs = [
             ['url' => '/admin/usuarios', 'title' => 'Usuários'],
-            ['url' => '', 'title' => 'Novo Usuário'],
+            ['url' => '', 'title' => 'Adicionar Usuário'],
         ];
         return view('admin.users.create', compact('roles', 'breadCrumbs'));
     }
@@ -70,7 +69,7 @@ class ControllerUser extends Controller
             $user->name = $request->nome;
             $user->email = $request->email;
             if ($request->password !== $request->checkPassword) {
-                return redirect('admin/usuarios')->with(['message' => 'As senhas não são iguais', 'type' => 'error']);
+                return redirect('admin/usuarios');
             }
             $user->password = Hash::make($request->password);
 
@@ -78,10 +77,11 @@ class ControllerUser extends Controller
             $user->save();
             $user->createRole($role);
             DB::commit();
-            return redirect('admin/usuarios')->with(['message' => 'Usuário adicionado com sucesso', 'type' => 'sucess']);
         } catch (\PDOException $e) {
             DB::rollBack();
             return redirect('admin/usuarios')->with(['message' => 'Erro ao adicionar usuário', 'type' => 'error']);
+        } finally {
+            return redirect('admin/usuarios')->with(['message' => 'Usuário adicionado com sucesso', 'type' => 'sucess']);
         }
     }
 
@@ -114,7 +114,7 @@ class ControllerUser extends Controller
         }
         $user = User::find($id);
         $user->role = $user->findRoleByIdUser($id);
-        $roles = Roles::where('nome', '!=', 'cliente')->get();
+        $roles = Roles::all();
         $breadCrumbs = [
             ['url' => '/admin/usuarios', 'title' => 'Usuários'],
             ['url' => '', 'title' => $user->name],
@@ -141,7 +141,7 @@ class ControllerUser extends Controller
 
         $role = Roles::find($request->role_id);
 
-        $user->updateRole($role, $user->roles[0]);
+        $user->createRole($role);
 
         return redirect('admin/usuarios')->with(['message' => 'atualizado com sucesso', 'type' => 'sucess']);
     }
@@ -170,21 +170,5 @@ class ControllerUser extends Controller
         }
 
         return redirect('admin/usuarios')->with(['message' => 'Usuário deletado com sucesso', 'type' => 'sucess']);
-    
-    }
-
-    public function updateProfile(Request $request, $id)
-    {
-        try {
-            $user = User::find($id);
-            $user->name = $request->nome;
-            $user->email = $request->email;
-            $user->save();
-
-            return redirect('admin/dashboard')->with(['message' => 'atualizado com sucesso', 'type' => 'sucess']);
-        } catch (\Exception $th) {
-            return redirect('admin/dashboard')->with(['message' => 'Erro ao atualizar', 'type' => 'error']);    
-        }
-        
     }
 }

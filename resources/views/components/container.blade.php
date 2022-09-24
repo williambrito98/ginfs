@@ -1,7 +1,7 @@
 @props(['tabs'])
 
 <section class="container mx:auto">
-    <div class="rounded-xl bg-table">
+    <div class="border mt-10 rounded-lg bg-form">
         @foreach ($tabs as $tab)
             @if ($tab['url'])
                 <div class="flex-basis-50 m-2 {{ $tab['active'] }} bg-FCD34D">

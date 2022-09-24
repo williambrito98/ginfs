@@ -5,12 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClienteRequest;
 use App\Library\AppHelper;
-use App\Models\Cidades;
 use App\Models\Clientes;
 use App\Models\FaturamentoClientes;
 use App\Models\Roles;
 use App\Models\Servicos;
-use App\Models\TipoEmissao;
 use App\Models\Tomadores;
 use App\Models\User;
 use App\Models\UsuarioApi;
@@ -21,7 +19,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use DateTime;
-use Exception;
 
 class ControllerClientes extends Controller
 {
@@ -51,17 +48,11 @@ class ControllerClientes extends Controller
             abort(403, 'Não Autorizado');
         }
 
-        $cidades = Cidades::where('indicador_ativo', '=', 'S')->get();
-
         $breadCrumbs = [
             ['url' => '/admin/clientes', 'title' => 'Clientes'],
-            ['url' => '', 'title' => 'Novo Cliente'],
+            ['url' => '', 'title' => 'Adicionar Cliente'],
         ];
-
-        $tiposEmissao = TipoEmissao::all();
-
-
-        return view('admin.clientes.create', compact('breadCrumbs', 'cidades', 'tiposEmissao'));
+        return view('admin.clientes.create', compact('breadCrumbs'));
     }
 
     /**
@@ -70,7 +61,7 @@ class ControllerClientes extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ClienteRequest $request)
+    public function store(Request $request)
     {
         if (Gate::denies('adicionar-clientes')) {
             abort(403, 'Não Autorizado');
@@ -88,15 +79,11 @@ class ControllerClientes extends Controller
             $client->cpf_cnpj = AppHelper::limpaCPF_CNPJ($request->cpf_cnpj);
             $client->inscricao_municipal = $request->inscricao_municipal;
             $client->razao_social = strtoupper($request->razao_social);
-            $client->cidade_id = $request->cidade_id;
-            $client->tipo_emissaos_id = $request->tipo_emissao;
 
             $client->usuario_ginfs = $request->usuarioGinfs;
             $client->senha_ginfs = AppHelper::encodeString($request->senhaGinfs, $key);
 
             $client->save();
-
-            FaturamentoClientes::createFaturamentoAnualEntries($client->id);
 
             $usuarioApi = new UsuarioApi();
             $usuarioApi->usuario = $request->cpf_cnpj;
@@ -108,11 +95,12 @@ class ControllerClientes extends Controller
             $user->save();
             $user->createRole($role);
             DB::commit();
-            return redirect('admin/clientes')->with(['message' => 'Cliente cadastrado com sucesso', 'type' => 'sucess']);
-        } catch (\Exception $th) {
+        } catch (\PDOException $th) {
             dd($th);
             DB::rollBack();
             return redirect('admin/clientes')->with(['message' => 'Erro ao cadastrar cliente', 'type' => 'error']);
+        } finally {
+            return redirect('admin/clientes')->with(['message' => 'Cliente cadastrado com sucesso', 'type' => 'sucess']);
         }
     }
 
@@ -128,12 +116,10 @@ class ControllerClientes extends Controller
         $anoAtual = new DateTime('now');
         $anoPassado = clone $anoAtual;
         $cliente = Clientes::find($clienteId);
-        $sub = $cliente->razao_social;
 
         $breadCrumbs = [
             ['url' => '/admin/clientes', 'title' => 'Clientes'],
-            ['url' => '/admin/clientes/' . $clienteId . '/edit', 'title' => substr($sub, 0, 68) . '...'],
-            ['url' => '', 'title' => 'Faturamento']
+            ['url' => '', 'title' => $cliente->razao_social],
         ];
 
         return view('admin.clientes.faturamento.index', compact('clienteId', 'faturamento', 'anoAtual', 'anoPassado', 'breadCrumbs'));
@@ -152,25 +138,15 @@ class ControllerClientes extends Controller
         }
 
         $cliente = User::join('clientes', 'users.cliente_id', '=', 'clientes.id')
-            ->leftJoin('cidades', 'clientes.cidade_id', '=', 'cidades.id')
-            ->select('clientes.id', 'users.name', 'users.email', 'clientes.inscricao_municipal', 'clientes.razao_social', 'clientes.cpf_cnpj', 'cidades.id as cidade_id', 'cidades.nome as nome_cidade', 'clientes.usuario_ginfs', 'clientes.senha_ginfs','tipo_emissaos_id')
+            ->select('clientes.id', 'users.name', 'users.email', 'clientes.inscricao_municipal', 'clientes.razao_social', 'clientes.cpf_cnpj')
             ->where('users.indicador_ativo', 'S')
             ->where('clientes.id', $id)->first();
-        $key = AppHelper::getSodiumKeyByteFromHexString(env('APP_CRYPT_KEY'));
-
-        if (strlen($cliente->senha_ginfs) > 20) {
-            $cliente->senha_ginfs = $cliente->senha_ginfs ? AppHelper::decodeString($cliente->senha_ginfs, $key) : '';
-        }
-        $cidades = Cidades::where('indicador_ativo', '=', 'S')->get();
-
-        $tiposEmissao = TipoEmissao::all();
 
         $breadCrumbs = [
             ['url' => '/admin/clientes', 'title' => 'Clientes'],
             ['url' => '', 'title' => $cliente->razao_social],
         ];
-
-        return view('admin.clientes.edit', compact('cliente', 'breadCrumbs', 'cidades', 'tiposEmissao'));
+        return view('admin.clientes.edit', compact('cliente', 'breadCrumbs'));
     }
 
     /**
@@ -180,7 +156,7 @@ class ControllerClientes extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ClienteRequest $request, $id)
+    public function update(Request $request, $id)
     {
         if (Gate::denies('editar-clientes')) {
             abort(403, 'Não Autorizado');
@@ -196,31 +172,25 @@ class ControllerClientes extends Controller
             $cliente->inscricao_municipal = $request->inscricao_municipal;
             $cliente->razao_social = $request->razao_social;
             $cliente->usuario_ginfs = $request->usuarioGinfs;
-            $cliente->cidade_id = $request->cidade_id;
             $cliente->senha_ginfs = AppHelper::encodeString($request->senhaGinfs, $key);
-            $cliente->tipo_emissaos_id = $request->tipo_emissao;
             $cliente->save();
 
-            $user = User::where('cliente_id', '=', $id)->first();
-            if (!$user) {
-                throw new Exception("Usuário não encontrado");
-            }
+            $user = User::where('cliente_id', '=', $id)->firstOrFail();
 
-            $usuarioApi = UsuarioApi::where('usuario', '=', $cpf_cnpj_limpo)->first();
-            if ($usuarioApi) {
-                $usuarioApi->usuario = $cpf_cnpj_limpo;
-                $usuarioApi->senha = $user->password;
-                $usuarioApi->save();
-            }
+            $usuarioApi = UsuarioApi::where('usuario', '=', $cpf_cnpj_limpo)->firstOrFail();
+            $usuarioApi->usuario = $cpf_cnpj_limpo;
+            $usuarioApi->senha = $user->password;
+            $usuarioApi->save();
 
             User::where('cliente_id', $id)->update(['name' => $request->nome, 'email' => $request->email]);
 
             DB::commit();
-            return redirect('admin/clientes')->with(['message' => 'Cliente atualizado com sucesso', 'type' => 'sucess']);
-        } catch (\Exception $e) {
-            //dd($e);
+        } catch (\PDOException $th) {
+            dd($th);
             DB::rollBack();
-            return redirect('admin/clientes')->with(['message' => 'Erro ao atualizar cliente', 'type' => 'error']);
+            return redirect()->withInput()->with(['message' => 'Erro ao atualizar cliente', 'type' => 'error']);
+        } finally {
+            return redirect('admin/clientes')->with(['message' => 'Cliente atualizado com sucesso', 'type' => 'sucess']);
         }
     }
 
@@ -276,11 +246,9 @@ class ControllerClientes extends Controller
             $tomador->cpf_cnpj = AppHelper::formatarCPF_CNPJ($tomador->cpf_cnpj);
         }
 
-        $sub = $user->razao_social;
-
         $breadCrumbs = [
             ['url' => '/admin/clientes', 'title' => 'Clientes'],
-            ['url' => '/admin/clientes/' . $id . '/edit', 'title' => substr($sub, 0, 68) . '...'],
+            ['url' => '/admin/clientes/' . $id . '/edit', 'title' => $user->razao_social],
             ['url' => '', 'title' => 'Tomadores']
         ];
 
@@ -328,7 +296,7 @@ class ControllerClientes extends Controller
             abort(403, 'Não Autorizado');
         }
 
-        $tomadorServicos = Servicos::select('tomadores.*', 'servicos.*', 'clientes.razao_social as razao_social', 'users.id as userID', 'tomadores.nome as nome_tomador')
+        $tomadorServicos = Servicos::select('servicos.*', 'clientes.razao_social as razao_social', 'users.id as userID', 'tomadores.nome as nome_tomador')
             ->join('users_tomadores_servicos', 'users_tomadores_servicos.servicos_id', '=', 'servicos.id')
             ->join('tomadores', 'tomadores.id', '=', 'users_tomadores_servicos.tomadores_id')
             ->join('users', 'users.id', '=', 'users_tomadores_servicos.user_id')
@@ -338,28 +306,21 @@ class ControllerClientes extends Controller
             ->where('users_tomadores_servicos.indicador_ativo', '=', 'S')
             ->where('tomadores.indicador_exclusao', '!=', 'S')
             ->where('users.indicador_ativo', '=', 'S')->get();
-
         $servicos = Servicos::where('indicador_ativo', '=', 'S')->get();
         $user  = Clientes::select('users.id as userID', 'clientes.razao_social')
             ->join('users', 'users.cliente_id', '=', 'clientes.id')
             ->where('clientes.id', '=', $clienteID)->first();
-
         $id = $clienteID;
         $userID = $user->userID;
-        $tomador = Tomadores::find($tomadorID);
-        $sub_cliente = $user->razao_social;
-        $sub_tomador = $tomador->nome;
 
-        // dd($request);
         $breadCrumbs = [
             ['url' => '/admin/clientes', 'title' => 'Clientes'],
-            ['url' => '/admin/clientes/' . $id . '/edit', 'title' => substr($sub_cliente, 0, 34) . '...'],
+            ['url' => '/admin/clientes/' . $id . '/edit', 'title' => $user->razao_social],
             ['url' => '/admin/clientes/' . $id . '/tomadores', 'title' => 'Tomadores'],
-            ['url' => '', 'title' => substr($sub_tomador, 0, 34) . '...']
+            ['url' => '', 'title' => count($tomadorServicos) > 0 ? $tomadorServicos[0]->nome_tomador : '']
         ];
 
-
-        return view('admin.clientes.tomadores.details', compact('tomadorServicos', 'servicos', 'user', 'id', 'userID', 'breadCrumbs', 'tomadorID', 'tomador'));
+        return view('admin.clientes.tomadores.details', compact('servicos', 'tomadorServicos', 'breadCrumbs', 'userID', 'id', 'tomadorID'));
     }
 
     public function storeTomadoresServicos(Request $request)
@@ -386,7 +347,7 @@ class ControllerClientes extends Controller
         try {
             DB::beginTransaction();
             foreach ($request->idItens as $key => $value) {
-                User::destroyRelationUserTomadoresServicos($request->userID, $request->tomadorID, $value);
+                User::destroyRelationUserTomadoresServicos($request->userID, $request->tomador_id, $value);
             }
             DB::commit();
         } catch (\PDOException $e) {

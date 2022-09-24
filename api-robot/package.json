@@ -5,9 +5,8 @@
    "main": "index.js",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "dev": "ts-node src/index.ts",
-      "build": "./node_modules/.bin/babel src --extensions \".ts\",\".env\" --out-dir dist --copy-files --no-copy-ignored",
-      "start": "node dist/index.js"
+      "start": "ts-node src/index.ts",
+      "build": "./node_modules/.bin/babel src --extensions \".ts\",\".env\" --out-dir dist --copy-files --no-copy-ignored"
    },
    "author": "",
    "license": "ISC",

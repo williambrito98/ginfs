@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DateTime;
 use App\Library\AppHelper;
-use Carbon\Carbon;
 use Exception;
 use Kyslik\ColumnSortable\Sortable;
 
@@ -79,8 +78,6 @@ class FaturamentoClientes extends Model
         return $this->belongsTo(Clientes::class, 'clientes_id', 'id');
     }
 
-
-
     public function razaoSocialSortable($query, $direction)
     {
         return $query->join('clientes', 'faturamento_clientes.clientes_id', '=', 'clientes.id')
@@ -130,38 +127,16 @@ class FaturamentoClientes extends Model
 
     public static function getFaturamentoAnualVigente($idCliente)
     {
+        $mesAtual = new DateTime('now');
+        $dozeMesesAntes = clone $mesAtual;
+
+        $dataInicial = date($mesAtual->format('Y-m') . '-' . '01' . ' ' . '00:00:00');
+        $dataFinal = date($dozeMesesAntes->modify('-12 month')->format('Y-m') . '-' . '01' . ' ' . '00:00:00');
+
         return FaturamentoClientes::where('clientes_id', '=', $idCliente)
-            ->orderBy('mes_ano_faturamento', 'DESC')
-            ->limit(12)
+            ->whereBetween('mes_ano_faturamento', [$dataFinal, $dataInicial])
+            ->orderBy('mes_ano_faturamento')
             ->get();
-    }
-
-    static public function createFaturamentoAnualEntries($idCliente)
-    {
-        $arrayRegistros = [];
-        for ($i = 0; $i <= 12; $i++) {
-            $now = Carbon::now();
-            $newDate = date($now->subMonth($i)->format('Y-m')  . '-' . '01' . ' ' . '00:00:00');
-            array_push(
-                $arrayRegistros,
-                [
-                    'valor_faturamento_externo' => 0,
-                    'mes_ano_faturamento' => $newDate,
-                    'total_mes' => 0,
-                    'clientes_id' => $idCliente,
-                    'created_at' => now()->toDateTimeString(),
-                    'updated_at' => now()->toDateTimeString(),
-                    'encerrado' => $i === 0 ? 'N' : 'S'
-                ]
-            );
-        }
-
-        try {
-            FaturamentoClientes::insert($arrayRegistros);
-        } catch (\Exception $e) {
-            dd($e);
-            throw new Exception('Ocorreu um erro ao criar entradas do faturamento.');
-        }
     }
 
     protected function calcularAliquota()
@@ -175,15 +150,20 @@ class FaturamentoClientes extends Model
         [(FT12 x IND) – FR] ÷ FT12 resulta no valor da alíquota a ser usada no próximo mês
         */
 
+        $mesAtual = new DateTime('now');
+        $dozeMesesAntes = clone $mesAtual;
+
         $numberFormatter = new \NumberFormatter('pt_BR', \NumberFormatter::DECIMAL);
         $currencies = new ISOCurrencies();
         $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
 
+        $dataInicial = date($mesAtual->format('Y-m') . '-' . '01' . ' ' . '00:00:00');
+        $dataFinal = date($dozeMesesAntes->modify('-12 month')->format('Y-m') . '-' . '01' . ' ' . '00:00:00');
 
         //somar os ultimos 12 faturamentos
         $ultimosDozeFaturamentos = FaturamentoClientes::where('clientes_id', '=', $this->clientes_id)
-            ->where('encerrado', '=', 'S')
-            ->limit(12)
+            ->whereBetween('mes_ano_faturamento', [$dataFinal, $dataInicial])
+            ->orderBy('mes_ano_faturamento')
             ->get();
 
         $valorTotalDozeFaturamentos = Money::BRL(0);
@@ -200,7 +180,6 @@ class FaturamentoClientes extends Model
         // Busca e seta as variaveis
         $formulas = Formulas::getValoresDeQuantia($moneyFormatter->format($valorTotalDozeFaturamentos));
         $indice = strval($formulas->indice / 100);
-
         $fatorRedutor = $formulas->fator_redutor;
         $issRetido = strval($formulas->iss_retido_das / 100);
 
@@ -216,17 +195,10 @@ class FaturamentoClientes extends Model
 
         $fatorRedutor = str_replace('.', '', $fatorRedutor);
 
-        $produtoValorAliquota = strval(intval($produtoValorAliquota, 10));
-
-
         $prodValorAliquota = new Money($produtoValorAliquota, new Currency('BRL'));
+        $precoValorRedutor = new Money($fatorRedutor, new Currency('BRL'));
 
-        if (intval($fatorRedutor) == 0) {
-            $calculoFaturamentoAliquotaFatorRedutor = $prodValorAliquota;
-        } else {
-            $precoValorRedutor = new Money($fatorRedutor, new Currency('BRL'));
-            $calculoFaturamentoAliquotaFatorRedutor = $prodValorAliquota->subtract($precoValorRedutor);
-        }
+        $calculoFaturamentoAliquotaFatorRedutor = $prodValorAliquota->subtract($precoValorRedutor);
 
         // [(FT12 x IND) – FR] ÷ FT12
         if ((float)$valorTotalMeses == 0) {
@@ -237,23 +209,6 @@ class FaturamentoClientes extends Model
             $aliquotaProximoMes = $calculoFaturamentoAliquotaFatorRedutor->getAmount() * 100;
             $aliquotaProximoMes = $aliquotaProximoMes * $issRetido;
 
-            $aliquota = round($aliquotaProximoMes, 2);
-
-            if ($aliquota === 2.01) {
-                $this->aliquota = 2;
-                return true;
-            }
-
-            if ($aliquota > 5) {
-                $this->aliquota = 5;
-                return true;
-            }
-
-            if ($aliquota <= 0) {
-                $this->aliquota = 2;
-                return true;
-            }
-
             $this->aliquota = round($aliquotaProximoMes, 2);
 
             return true;
@@ -263,35 +218,7 @@ class FaturamentoClientes extends Model
         $valorTotalDozeFat = new Money($valorTotalDozeFaturamentos, new Currency('BRL'));
         $aliquotaProximoMes = ($calculoFaturamentoAliquotaFatorRedutor->getAmount() / $valorTotalDozeFat->getAmount()) * 100;
         $aliquotaProximoMes = $aliquotaProximoMes * $issRetido;
-        $aliquota = round($aliquotaProximoMes, 2);
-
-        if ($aliquota === 2.01) {
-            $this->aliquota = 2;
-            return true;
-        }
-
-        if ($aliquota > 5) {
-            $this->aliquota = 5;
-            return true;
-        }
-
-        if ($aliquota <= 0) {
-            $this->aliquota = 2;
-            return true;
-        }
 
         $this->aliquota = round($aliquotaProximoMes, 2);
-
-        return true;
     }
-
-    // public static function setFaturamento($idCliente, $valor)
-    // {
-    //     $getLastMounth = FaturamentoClientes::where('encerrado', '=', 'N')->select('mes_ano_faturamento')->first();
-    //     $faturamento = FaturamentoClientes::where('clientes_id', '=', $idCliente)->where('mes_ano_faturamento', '=', $getLastMounth->mes_ano_faturamento)->first();
-    //     $faturamento->valor_faturamento = floatval($valor) + $faturamento->original['valor_faturamento'];
-    //     $faturamento->quantidade_emissoes++;
-    //     $faturamento->total_mes = floatval($valor) + $faturamento->original['valor_faturamento_externo'];
-    //     $faturamento->save();
-    // }
 }

@@ -25,8 +25,17 @@ class ControllerServicos extends Controller
             abort(403, 'Não Autorizado');
         }
 
-        $servicos = Servicos::where('indicador_ativo', '=', 'S')->orderBy('nome')->get();
-
+        if (AppHelper::isGerenteDoSistema()) {
+            $servicos = Servicos::where('indicador_ativo', '=', 'S')->orderBy('nome')->get();
+        } else {
+            $servicos = DB::table('servicos')
+                ->select('servicos.*')
+                ->join('users_servicos', 'servicos.id', '=', 'users_servicos.servicos_id')
+                ->where('users_servicos.user_id', '=', Auth::user()->id)
+                ->where('servicos.indicador_ativo', '=', 'S')
+                ->where('users_servicos.indicador_ativo', '=', 'S')
+                ->orderBy('servicos.id')->get();
+        }
 
 
         return view('admin.servicos.index', compact('servicos'));
@@ -41,7 +50,7 @@ class ControllerServicos extends Controller
     {
         $breadCrumbs = [
             ['url' => '/admin/servicos', 'title' => 'Serviços'],
-            ['url' => '', 'title' => 'Novo Tipo de serviço'],
+            ['url' => '', 'title' => 'Adicionar Serviço'],
         ];
         return view('admin.servicos.create', compact('breadCrumbs'));
     }
@@ -66,8 +75,12 @@ class ControllerServicos extends Controller
             $novoServico->codigo = $request->codigo;
             $novoServico->retencao_iss = $request->retencao_iss == 'on' ? true : false;
             $novoServico->indicador_ativo = 'S';
-            $novoServico->cod_atividade = $request->cod_atividade;
+            $novoServico->cod_atividade = $request->codAtividade;
             $novoServico->save();
+
+            if (!AppHelper::isGerenteDoSistema()) {
+                $novoServico->users()->attach(Auth::user());
+            }
 
             DB::commit();
         } catch (\PDOException $e) {
@@ -100,12 +113,16 @@ class ControllerServicos extends Controller
             abort(403, 'Não Autorizado');
         }
 
+        if (!AppHelper::isGerenteDoSistema() && !Servicos::isServicoOwner(Auth::user()->id, $id)) {
+            abort(403, 'Não Autorizado');
+        }
+
         $servico = Servicos::where('id', '=', $id)
             ->where('indicador_ativo', '=', 'S')
             ->firstOrFail();
         $breadCrumbs = [
-            ['url' => '/admin/servicos', 'title' => 'Tipos de serviço'],
-            ['url' => '', 'title' => $servico->codigo],
+            ['url' => '/admin/servicos', 'title' => 'Serviços'],
+            ['url' => '', 'title' => $servico->nome],
         ];
         return view('admin.servicos.edit', compact('servico', 'breadCrumbs'));
     }
@@ -123,6 +140,13 @@ class ControllerServicos extends Controller
             abort(403, 'Não Autorizado');
         }
 
+        if (
+            !AppHelper::isGerenteDoSistema() &&
+            !Servicos::isServicoOwner(Auth::user()->id, $id)
+        ) {
+            abort(403, 'Não Autorizado');
+        }
+
         try {
             $servico = Servicos::find($id);
 
@@ -130,7 +154,6 @@ class ControllerServicos extends Controller
                 $servico->nome = $request->nome;
                 $servico->codigo = $request->codigo;
                 $servico->retencao_iss = $request->retencao_iss == 'on' ? true : false;
-                $servico->cod_atividade = $request->cod_atividade;
                 $servico->save();
                 return redirect('admin/servicos')->with(['message' => 'Serviço atualizado com sucesso', 'type' => 'sucess']);
             }
@@ -159,9 +182,20 @@ class ControllerServicos extends Controller
             DB::beginTransaction();
 
             foreach ($request->idItens as $key => $value) {
-                Servicos::where("id", $value)->update([
-                    'indicador_ativo' => 'N'
-                ]);
+                if (
+                    !AppHelper::isGerenteDoSistema() &&
+                    !Servicos::isServicoOwner($currentUserId, $value)
+                ) {
+                    abort(403, 'Não Autorizado');
+                }
+                if (AppHelper::isGerenteDoSistema()) {
+
+                    Servicos::where("id", $value)->update([
+                        'indicador_ativo' => 'N'
+                    ]);
+                } else {
+                    Servicos::disableUserServicoRelation($currentUserId, $value);
+                }
             }
 
             DB::commit();

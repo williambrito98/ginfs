@@ -5,18 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NotaFiscalRequest;
 use App\Library\AppHelper;
-use App\Models\FaturamentoClientes;
 use App\Models\NotaFiscal;
-use App\Models\User;
 use App\Models\UsuarioApi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use DateTime;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class NotaFiscalController extends Controller
 {
@@ -27,16 +23,8 @@ class NotaFiscalController extends Controller
      */
     public function index()
     {
+        $listaDeSolicitacoes = NotaFiscal::paginate(20);
 
-        $currentUserId = Auth::user()->id;
-        $user = User::find($currentUserId)->roles[0]->nome;
-
-        if($user == 'cliente'){
-            $listaDeSolicitacoes = NotaFiscal::where('user_id', '=', $currentUserId)->orderBy('id', 'desc')->paginate(20);
-            return view('admin.solicitacao.index', compact('listaDeSolicitacoes'));
-        }
-
-        $listaDeSolicitacoes = NotaFiscal::orderBy('id', 'desc')->paginate(20);
         return view('admin.solicitacao.index', compact('listaDeSolicitacoes'));
     }
 
@@ -49,7 +37,7 @@ class NotaFiscalController extends Controller
     {
         $breadCrumbs = [
             ['url' => '/admin/solicitacao', 'title' => 'Todas as Solicitações'],
-            ['url' => '', 'title' => 'Nova solicitação de Nota Fiscal'],
+            ['url' => '', 'title' => 'Solicitação de NF'],
         ];
 
         return view('admin.solicitacao.create', compact('breadCrumbs'));
@@ -72,62 +60,64 @@ class NotaFiscalController extends Controller
             $novaNotaFiscal->data_emissao = $request->dataEmissao;
             $novaNotaFiscal->servico_id = $request->tipoServico;
             $novaNotaFiscal->observacoes = $request->observacoes == '' ? null : $request->observacoes;
-            if (!$novaNotaFiscal->setAliquota() !== false) {
-                return back()->withInput()->with(['message' => 'Erro ao obter a aliquota: Existem meses que não foram encerrados', 'type' => 'error']);
-            }
-
-            if (intval($novaNotaFiscal->aliquota) === 0) {
-                return back()->withInput()->with(['message' => 'Erro ao solicitar a nota: a aliquota deve ser maior que "0"', 'type' => 'error']);
-            }
-
+            $novaNotaFiscal->setAliquota();
             $novaNotaFiscal->save();
+
+            // const dataWorker = {
+            //     identificacao: '18548754000146',
+            //     password: '218332CAJ7524',
+            //     tomador: {
+            //       cpfCnpj: '00632587000151'
+            //     },
+            //     dataEmissao: '30-07-2021',
+            //     servico: {
+            //       codigo: '2001',
+            //       atividade: '523110100',
+            //       descricao: 'descricao'
+            //     },
+            //     aliquota: '2',
+            //     valor: '0.01',
+            //     email: '',
+            //     routeStatus: '',
+            //     userID: '1'
+            //   }
+
 
             $usuarioApi = UsuarioApi::where('usuario', '=', AppHelper::limpaCPF_CNPJ($novaNotaFiscal->cliente->cpf_cnpj))->firstOrFail();
 
-            $response = Http::post(env('BASE_URL_API_ROBOT') . '/login', [
+      
+
+            $response = Http::post('http://localhost:3333/login', [
                 'user' => $usuarioApi->usuario,
                 'password' => $usuarioApi->senha
             ]);
 
-            $key = AppHelper::getSodiumKeyByteFromHexString(env('APP_CRYPT_KEY'));
-
-            $aliquota = strval($novaNotaFiscal->aliquota);
-
-            $floatAliquota = intval(explode('.', $aliquota)[1]);
-
-            if ($floatAliquota === 0) {
-                $aliquota = strval(intval($aliquota));
-            }
-
-
-            if (intval($aliquota) > 5) {
-                $aliquota = '5';
-            }
 
             $run = Http::withHeaders([
                 'x-access-token' => $response->json()['token']
-            ])->post(env('BASE_URL_API_ROBOT') . '/run', [
+            ])->post('http://localhost:3333/run', [
                 'identificacao' => AppHelper::limpaCPF_CNPJ($novaNotaFiscal->cliente->usuario_ginfs),
-                'password' => AppHelper::decodeString($novaNotaFiscal->cliente->senha_ginfs, $key),
+                'password' => Crypt::decryptString($novaNotaFiscal->cliente->senha_ginfs),
                 'tomador' => [
-                    'cpfCnpj' => AppHelper::limpaCPF_CNPJ($novaNotaFiscal->tomador->cpf_cnpj)
+                    'cpfCnpj' => '00632587000151'
                 ],
-                'dataEmissao' => AppHelper::formatDate(Carbon::parse($novaNotaFiscal->data_emissao)->format('Y-m-d'), 'YY-mm-dd', 'YY-MM-dd'),
+                'dataEmissao' => Carbon::parse($novaNotaFiscal->data_emissao)->format('d-m-Y'),
                 'servico' => [
-                    'codigo' =>  strval($novaNotaFiscal->servico->codigo),
-                    'atividade' =>  $novaNotaFiscal->servico->cod_atividade,
-                    'descricao' => strval($novaNotaFiscal->observacoes),
+                    'codigo' =>  '2001',//$novaNotaFiscal->servico->codigo,
+                    'atividade' => '523110100',
+                    'descricao' => $novaNotaFiscal->observacoes,
                 ],
-                'aliquota' => $aliquota,
-                'valor' => strval($novaNotaFiscal->valor),
-                'userID' => strval($request->idCliente),
-                'url' => route('saveStatus'),
-                'notaID' => strval($novaNotaFiscal->id),
-                'urlCidade' => $novaNotaFiscal->cliente->cidade->url_ginfes
+                'aliquota' => '2',
+                'valor' => $novaNotaFiscal->valor,
+                'userID' => $request->idCliente
             ]);
+
+
+
 
             return redirect('admin/solicitacao')->with(['message' => 'Nota Fiscal emitida. Em análise.', 'type' => 'sucess']);
         } catch (\Exception $e) {
+            dd($e);
             return back()->withInput()->with(['message' => 'Erro ao emitir Nota Fiscal', 'type' => 'error']);
         }
     }
@@ -140,28 +130,12 @@ class NotaFiscalController extends Controller
      */
     public function show($idNotaFiscal)
     {
+        $breadCrumbs = [
+            ['url' => '/admin/solicitacao', 'title' => 'Todas as Solicitações'],
+            ['url' => '', 'title' => 'Dados da Solicitação']
+        ];
+
         $solicitacao = NotaFiscal::find($idNotaFiscal);
-
-        $parentUrl = $_SERVER['HTTP_REFERER'];
-        $reversedUrl = explode('/', strrev($parentUrl), 2);
-        $parentName = strrev($reversedUrl[0]);
-
-        $breadCrumbs = [];
-
-        switch ($parentName) {
-            case 'solicitacao':
-                $breadCrumbs = [
-                    ['url' => '/admin/solicitacao', 'title' => 'Todas as Solicitações']
-                ];
-                break;
-            case 'dashboard':
-                $breadCrumbs = [
-                    ['url' => '/admin/dashboard', 'title' => 'Dashboard']
-                ];
-                break;
-        }
-
-        array_push($breadCrumbs, ['url' => '', 'title' => 'Dados da Solicitação']);
 
         if (!is_null($solicitacao)) {
             return view('admin.solicitacao.show', compact('solicitacao', 'breadCrumbs'));
@@ -169,17 +143,6 @@ class NotaFiscalController extends Controller
 
         return redirect('admin/solicitacao')
             ->with(['message' => 'Nota Fiscal não encontrada.', 'type' => 'error']);
-    }
-
-
-    public function downloadNota($idNota)
-    {
-        $nota = NotaFiscal::find($idNota);
-        $folderToken  = Storage::disk('notas')->directories($nota->cliente_id . '/' . $nota->numero)[0];
-        $download = Storage::disk('notas')->files($folderToken)[0];
-        $arrayPathFile = explode('/', $download);
-        $nameFile = end($arrayPathFile);
-        return response()->download(storage_path('notas/' . $download), $nameFile, ['Content-type' => 'application/pdf']);
     }
 
     /**
@@ -221,16 +184,15 @@ class NotaFiscalController extends Controller
         $nota = NotaFiscal::find($request->notaID);
         if ($nota) {
             $nota->status_nota_fiscal_id = $request->statusNota;
-            $nota->numero = $request->numeroNota;
             $nota->save();
             return response()->json([
                 "message" => "Status alterado com sucesso"
             ], 201);
-            //FaturamentoClientes::setFaturamento($request->id_cliente, $request->valor);
         }
 
         return response()->json([
             "message" => "Erro ao alterar status da nota"
         ], 401);
+      
     }
 }

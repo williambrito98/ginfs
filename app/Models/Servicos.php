@@ -15,6 +15,11 @@ class Servicos extends Model
 
     protected $fillable = ['codigo', 'nome', 'rentencao_iss'];
 
+    public function users()
+    {
+        return $this->hasMany(User::class, 'users_servicos');
+    }
+
     public function notaFiscal()
     {
         return $this->belongsTo(NotaFiscal::class, 'servico_id', 'id');
@@ -55,8 +60,6 @@ class Servicos extends Model
             ->join('tomadores', 'tomadores.id', '=', 'users_tomadores_servicos.tomadores_id')
             ->join('users', 'users.id', '=', 'users_tomadores_servicos.user_id')
             ->leftJoin('clientes', 'clientes.id', '=', 'users.cliente_id')
-            ->whereNotNull('servicos.codigo')
-            ->whereNotNull('servicos.cod_atividade')
             ->where('clientes.id', '=', $clienteID)
             ->where('tomadores.id', '=', $tomadorID)
             ->where('users_tomadores_servicos.indicador_ativo', '=', 'S')

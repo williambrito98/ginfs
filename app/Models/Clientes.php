@@ -26,9 +26,7 @@ class Clientes extends Model
         'cpf_cnpj',
         'inscricao_municipal',
         'faturamento_total',
-        'razao_social',
-        'cidade',
-        'tipo_emissaos_id'
+        'razao_social'
     ];
 
     protected static function boot()
@@ -50,18 +48,5 @@ class Clientes extends Model
     public function FaturamentoClientes()
     {
         return $this->hasMany(FaturamentoClientes::class, 'id', 'clientes_id');
-    }
-
-    public function tipoEmissao()
-    {
-        return $this->hasOne(TipoEmissao::class, 'id', 'tipo_emissaos_id');
-    }
-
-
-
-    public function Cidade()
-    {
-
-        return $this->hasOne(Cidades::class, 'id', 'cidade_id');
     }
 }

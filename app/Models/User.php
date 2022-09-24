@@ -73,16 +73,6 @@ class User extends Authenticatable
         return $this->hasMany(Tomadores::class, 'users_tomadores');
     }
 
-    public function clientes()
-    {
-        return $this->hasOne(Clientes::class, 'id', 'cliente_id');
-    }
-
-    public function servicos()
-    {
-        return $this->belongsToMany(Servicos::class, 'users_servicos');
-    }
-
     public static function createRelationUserTomadoresServicos($userID, $tomadorID, $servicoID)
     {
         UsersTomadoresServicos::create([
@@ -102,36 +92,27 @@ class User extends Authenticatable
     }
 
 
-
-
-    public function notasFiscais()
+    public function clientes()
     {
-        return $this->belongsTo(NotaFiscal::class, 'user_id');
+        return $this->hasOne(Clientes::class, 'id', 'cliente_id');
+    }
+
+    public function servicos()
+    {
+        return $this->belongsToMany(servicos::class, 'users_servicos');
     }
 
     public function createRole($role)
     {
         if (is_string($role)) {
-            $role = Roles::where('nome', '=', $role)->first();
+            $role = Roles::where('nome', '=', $role)->firstOrFail();
         }
+
         if ((bool) $this->findRole($role)) {
             $this->roles()->detach($role);
         }
 
         return $this->roles()->attach($role);
-    }
-
-    public function updateRole($newRole, $currentRole)
-    {
-        try {
-            $this->roles()->detach($currentRole);
-
-            $this->roles()->attach($newRole);
-
-            return true;
-        } catch (\Exception $th) {
-            return false;
-        }
     }
 
     public static function getRoleByUserId($id)
@@ -149,7 +130,7 @@ class User extends Authenticatable
 
     public function findRole($role)
     {
-        return $this->roles()->find($role);
+        return (bool) $this->roles()->find($role);
     }
 
     public function containRole($permissions)

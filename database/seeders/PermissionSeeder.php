@@ -16,22 +16,22 @@ class PermissionSeeder extends Seeder
     public function run()
     {
         $viewUser = Permissions::firstOrCreate([
-            'nome' => 'ver-usuarios',
+            'nome' => 'ver-usuario',
             'descricao' => 'Acesso a lista de usuarios'
         ]);
 
         $createUser = Permissions::firstOrCreate([
-            'nome' => 'adicionar-usuarios',
+            'nome' => 'adicionar-usuario',
             'descricao' => 'Adicionar usuarios'
         ]);
 
         $deleteUser = Permissions::firstOrCreate([
-            'nome' => 'deletar-usuarios',
+            'nome' => 'deletar-usuario',
             'descricao' => 'Deletar usuarios'
         ]);
 
         $editUser = Permissions::firstOrCreate([
-            'nome' => 'editar-usuarios',
+            'nome' => 'editar-usuario',
             'descricao' => 'Deletar usuarios'
         ]);
 
@@ -193,26 +193,5 @@ class PermissionSeeder extends Seeder
             'nome' => 'ver-cargos',
             'descricao' => 'Ver todos os cargos'
         ]);
-
-        $viewCidades = Permissions::firstOrCreate([
-            'nome' => 'ver-cidades',
-            'descricao' => 'Ver todas as cidades'
-        ]);
-
-        $removeCidades = Permissions::firstOrCreate([
-            'nome' => 'deletar-cidades',
-            'descricao' => 'Deletar cidades'
-        ]);
-
-        $addCidades = Permissions::firstOrCreate([
-            'nome' => 'adicionar-cidades',
-            'descricao' => 'Adicionar cidades'
-        ]);
-
-        $editCidades = Permissions::firstOrCreate([
-            'nome' => 'editar-cidades',
-            'descricao' => 'Editar cidades'
-        ]);
-
     }
 }

@@ -23,7 +23,7 @@ class ControllerRoles extends Controller
         if (Gate::denies('ver-cargos')) {
             abort(403, 'Não Autorizado');
         }
-        $roles = Roles::where('indicador_ativo', '=', 'S')->get();
+        $roles = Roles::all();
         return view('admin.roles.index', compact('roles'));
     }
 
@@ -42,8 +42,7 @@ class ControllerRoles extends Controller
 
         $breadCrumbs = [
             ['url' => '/admin/papeis', 'title' => 'Cargos'],
-            ['url' => '/admin/papeis/' . $id . '/edit', 'title' => $role->nome],
-            ['url' => '', 'title' => 'Permissões'],
+            ['url' => '', 'title' => $role->nome],
         ];
 
         return view('admin.roles.permissions.index', compact('role', 'permissions', 'breadCrumbs'));
@@ -56,16 +55,10 @@ class ControllerRoles extends Controller
      */
     public function create()
     {
-        if (Gate::denies('adicionar-cargos')) {
+        if (Gate::denies('adicionar-permissoes')) {
             abort(403, 'Não Autorizado');
         }
-
-        $breadCrumbs = [
-            ['url' => '/admin/papeis', 'title' => 'Cargos'],
-            ['url' => '', 'title' => 'Novo Cargo'],
-        ];
-
-        return view('admin.roles.create', compact('breadCrumbs'));
+        return view('admin.roles.create');
     }
 
     /**
@@ -76,22 +69,20 @@ class ControllerRoles extends Controller
      */
     public function store(RoleRequest $request)
     {
+
         if (Gate::denies('adicionar-cargos')) {
             abort(403, 'Não Autorizado');
         }
-
         try {
-
             $role = new Roles;
             $role->nome = $request->nome;
             $role->descricao = $request->descricao;
             $role->save();
 
-        } catch (\PDOException $th) {
-            DB::rollBack();
+            return redirect('admin/papeis')->with(['message' => 'Cargo cadastrado com sucesso', 'type' => 'sucess']);
+        } catch (\Exception $th) {
             return redirect('admin/papeis')->with(['message' => 'Erro ao cadastrar cargo', 'type' => 'error']);
         }
-        return redirect('admin/papeis')->with(['message' => 'Cargo cadastrado com sucesso', 'type' => 'sucess']);
     }
 
     public function permissionsStore(Request $request, $id)
@@ -133,13 +124,7 @@ class ControllerRoles extends Controller
             abort(403, 'Não Autorizado');
         }
         $role = Roles::find($id);
-
-        $breadCrumbs = [
-            ['url' => '/admin/papeis', 'title' => 'Cargos'],
-            ['url' => '', 'title' => $role->nome],
-        ];
-
-        return view('admin.roles.edit', compact('role', 'breadCrumbs'));
+        return view('admin.roles.edit', compact('role'));
     }
 
     /**
@@ -151,7 +136,7 @@ class ControllerRoles extends Controller
      */
     public function update(RoleRequest $request, $id)
     {
-        if (Gate::denies('editar-cargos')) {
+        if (Gate::denies('editar-cargo')) {
             abort(403, 'Não Autorizado');
         }
         try {
@@ -173,7 +158,7 @@ class ControllerRoles extends Controller
      */
     public function destroy(Request $request)
     {
-        if (Gate::denies('deletar-cargos')) {
+        if (Gate::denies('deletar-cargo')) {
             abort(403, 'Não Autorizado');
         }
 

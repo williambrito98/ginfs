@@ -19,8 +19,8 @@ class CreateClientesTable extends Migration
             $table->string('email')->unique();
             $table->string('cpf')->unique();
             $table->string('cnpj')->unique();
-            $table->string('inscricao_municipal')->nullable();
-            $table->float('faturamento_total')->nullable();
+            $table->string('inscricao_municipal');
+            $table->float('faturamento_total');
             $table->timestamps();
         });
     }

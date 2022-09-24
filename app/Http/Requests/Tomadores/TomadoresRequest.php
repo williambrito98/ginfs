@@ -25,6 +25,7 @@ class TomadoresRequest extends FormRequest
     {
         return [
             'nome' => ['required', 'string', 'max:255'],
+            'inscricao_municipal' => ['required', 'string', 'max:60'],
             'cpf_cnpj' => ['required', 'string', 'formato_cpf_ou_cnpj'],
             'tipo_emissao' => ['required']
         ];
@@ -33,7 +34,8 @@ class TomadoresRequest extends FormRequest
     public function messages() {
 
         return [
-            'cpf_cnpj.formato_cpf_ou_cnpj' => 'O campo CPF/CNPJ não possui o formato válido de CPF ou CNPJ.'
+            'cpf_cnpj.formato_cpf_ou_cnpj' => 'O campo CPF/CNPJ não possui o formato válido de CPF ou CNPJ.',
+            'inscricao_municipal.max' => 'O campo Inscrição Municipal não pode ser maior que 60 caracteres.'
         ];
     }
 }

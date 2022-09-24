@@ -1,6 +1,6 @@
 @props(['routeAdd', 'routeDelete', 'userID'])
 
-<div class="flex flex-end flex-row-reverse mb-3.5">
+<div class="flex flex-end flex-row-reverse">
     <div>
         <x-add-register :route="$routeAdd" />
     </div>

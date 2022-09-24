@@ -22,7 +22,7 @@
     @endif
 
     {{-- @can('adicionar-faturamento') --}}
-
+        
     {{-- @endcan --}}
     <p id="razao-social">{{old('nomeCliente') ?? ''}}</p>
     <div id="tabela-faturamento" style="display:block">
@@ -35,7 +35,7 @@
                 <th class="w-1/4 color-header-table">Total</th>
             </tr>
         </x-slot>
-
+        
         <x-slot name="content">
             <tr>
                 <td name="mes12" id="mes-12">{{ $anoAtual->modify('-1 month')->format('m/Y'); }}</td>
@@ -109,7 +109,7 @@
                 <td name="totalFaturamento1" id="total-faturamento-1">R$ 0,00</td>
                 <td name="totalMes1" id="total-mes-1">R$ {{old('inputTotalMes1') ?? 0}}</td>
             </tr>
-
+        
         </x-slot>
     </x-table>
     </div>
@@ -231,12 +231,12 @@
     {
         const idCampoInputHidden = '#input-total-mes-' + numeroMes;
         const idCampoTotal = '#total-mes-' + numeroMes;
-
+        
         const valorFatExt = currencyBRL(fatExt).value;
         const valorFatSistema = currencyBRL(fatSistema).value;
 
         const totalMes = currencyBRL(fatExt).add(currencyBRL(fatSistema));
-
+        
         $(idCampoTotal).html(totalMes.format());
         $(idCampoInputHidden).val(totalMes.format().substring(2));
     }

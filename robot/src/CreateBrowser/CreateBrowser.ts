@@ -1,6 +1,8 @@
 import puppeteer, { Browser, Page } from 'puppeteer-core'
-
+import { config } from 'dotenv'
+import { join, parse } from 'path'
 import { readdirSync } from 'fs'
+config({ path: join(parse(__dirname).dir, '.env') })
 
 export default class CreateBrowser {
   private browser: Browser
@@ -34,10 +36,10 @@ export default class CreateBrowser {
     return page
   }
 
-  public async closeAll () {
-    const pages = await this.browser.pages()
+  public async closeAll (browser: Browser) {
+    const pages = await browser.pages()
     await this.closeAllPages(pages)
-    await this.browser.close()
+    await browser.close()
   }
 
   private async closeAllPages (pages : Array<Page>) {
@@ -69,13 +71,8 @@ export default class CreateBrowser {
   public async waitForDownload (path : string) {
     const files = readdirSync(path)
     if (!files.length) {
-      await this.page.waitForTimeout(3000)
-      return await this.waitForDownload(path)
-    }
-
-    if (files[0].includes('crdownload')) {
-      await this.page.waitForTimeout(3000)
-      return await this.waitForDownload(path)
+      this.page.waitForTimeout(3000)
+      return this.waitForDownload(path)
     }
     return true
   }

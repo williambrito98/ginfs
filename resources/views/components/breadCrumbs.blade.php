@@ -4,7 +4,7 @@
     @if (isset($breadCrumbs))
         @foreach ($breadCrumbs as $bread)
             @if ($bread['url'])
-                <div class="text-xl mb-1"> 
+                <div class="text-xl mr-6 mb-1"> 
                     <a href="{{ $bread['url'] }}">{{ $bread['title'] }}</a></span>
                 </div>
                 <div class="mx-3">

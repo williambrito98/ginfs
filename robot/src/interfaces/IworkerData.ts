@@ -17,8 +17,6 @@ export default interface IworkerData {
     aliquota: string
     valor: string
     userID: string
-    email? : string
+    email : string
     url: string
-    notaID: string
-    urlCidade: string
 }

@@ -7,57 +7,45 @@
 
     <x-breadCrumbs :breadCrumbs="$breadCrumbs" />
     <hr>
-
-    <x-datalist placeholder="Busca" :route="route('clientes.tomadores.servicos.store')" :userID="$userID"
-        :tomadorID="$tomadorID" :items="$servicos">
-        <x-slot name="delete">
-            <x-delete-register :route="route('clientes.tomadores.servico.destroy')" :userID="$userID"
-                :tomadorID="$tomadorID" />
-        </x-slot>
-    </x-datalist>
-
-    <x-clientes.container :clienteID="$id" :tomadorID="$id" active="tomadores">
-        <div class="text-center">
-            <x-form.label value="DETALHES DO TOMADOR" class="w-full"/>
+    <x-delete-register :route="route('clientes.tomadores.servico.destroy')" :tomadorID="$tomadorID" :userID="$userID" />
+    <x-clientes.container :clienteID="$id" active="tomadores">
+        <div class="my-2 p-3 text-center text-sm bg-D1D5DB">
+            <h3>DETALHES DO TOMADOR</h3>
         </div>
-        <div class="max-w-screen-md mx-auto">
-            <x-form.label value="CPF/CNPJ" />
-            <x-form.input type="text" name="cpf_cnpj" value="{{ $tomador->nome }}"
-                class="w-full bg-grey-darker rounded" disabled />
-
-            <x-form.label value="NOME" />
-            <x-form.input type="text" name="nome" value="{{ $tomador->cpf_cnpj }}"
-                class="w-full bg-grey-darker rounded" disabled />
+        <div class="w-4/5 mx-auto my-2">
+            <label for="" class="block my-2 text-5C5C5C ">CPF/CNPJ</label>
+            <input type="text" class="w-full border-none bg-D1D5DB rounded" value="08192897126" disabled>
+            <label for="" class="block mt-2 text-5C5C5C ">NOME</label>
+            <input type="text" class="w-full border-none my-2 bg-D1D5DB rounded" value="08192897126" disabled>
         </div>
-
-        <div class="text-center">
-            <x-form.label value="TIPOS DE SERVIÇO" class="w-full"/>
+        <div class="my-2 p-3 text-center text-sm bg-D1D5DB">
+            <h3>TIPO DE SERVIÇO</h3>
         </div>
-
-        <x-table class="rounded-b-xl">
+        <x-datalist :route="route('clientes.tomadores.servicos.store')" :userID="$userID" :items="$servicos"
+            :tomadorID="$tomadorID" />
+        <x-table>
             <x-slot name="columns">
-                <tr class="bg-grey-darker">
-                    <th class="w-1/12 color-header-table showDelete py-2">
-                        <input type="checkbox" id="selectAll" class="rounded-sm">
+                <tr class="bg-btn-dropdown-client">
+                    <th class="w-1/6 p-3 color-header-table showDelete">
+                        <input type="checkbox" id="selectAll">
                     </th>
-                    <th class="w-1/12 color-header-table">CÓDIGO</th>
-                    <th class="w-8/12 color-header-table">DESCRIÇÃO</th>
-                    <th class="w-3/12 color-header-table">ISS</th>
+                    <th class="w-1/6 color-header-table">CÓDIGO</th>
+                    <th class="w-1/6 color-header-table">ISS</th>
                 </tr>
             </x-slot>
             <x-slot name="content">
                 @foreach ($tomadorServicos as $tomadorServico)
-                    <tr class="border-top">
-                        <td class="py-10 rounded-bl-xl">
-                            <input type="checkbox" class="select rounded-sm" value="{{ $tomadorServico->id }}">
+                    <tr>
+                        <td class="p-3">
+                            <input type="checkbox" class="select" value="{{ $tomadorServico->id }}">
                         </td>
-                        <td>{{ $tomadorServico->codigo }}</td>
-                        <td>{{ $tomadorServico->nome }}</td>
-                        <td class="rounded-br-xl">
+                        <td>{{ $tomadorServico->nome }}
+                        </td>
+                        <td>
                             @if ($tomadorServico->retencao_iss)
-                                <div class="bg-red-E32626  inline py-1 px-3 rounded-full">retido</div>
+                                <div class="bg-red-E32626  inline p-2 rounded-lg">RETIDO</div>
                             @else
-                                <div class="bg-green-56CA11 inline py-1 px-3 rounded-full">não retido</div>
+                                <div class="bg-green-56CA11 inline p-2 rounded-lg">NÃO RETIDO</div>
                             @endif
                         </td>
                     </tr>

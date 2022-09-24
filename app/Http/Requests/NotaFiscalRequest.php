@@ -26,8 +26,10 @@ class NotaFiscalRequest extends FormRequest
         return [
             'nome_cliente' => 'required|string',
             'cpf_cnpj' => 'required|string|formato_cpf_ou_cnpj',
+            'inscricao_municipal' => 'required|string',
             'busca-tomador' => 'required|string',
             'cpf_cnpj_tomador' => 'required|string|formato_cpf_ou_cnpj',
+            'inscricao_municipal_tomador' => 'required|string',
             'idCliente' => 'required|integer',
             'idTomador' => 'required|integer',
             'tipoServico' => 'required|integer',
@@ -43,9 +45,11 @@ class NotaFiscalRequest extends FormRequest
             'cpf_cnpj.formato_cpf_ou_cnpj' => 'O campo CPF/CNPJ não é um CPF ou CNPJ válido',
             'cpf_cnpj.required' => 'O campo CPF/CNPJ é obrigatório',
             'nome_cliente.required' => 'O campo Emissor é obrigatório.',
+            'inscricao_municipal.required' => 'O campo Inscrição Municipal é obrigatório.',
             'busca-tomador.required' => 'O campo Tomador é obrigatório.',
             'cpf_cnpj_tomador.formato_cpf_ou_cnpj' => 'O campo CPF/CNPJ não é um CPF ou CNPJ válido',
             'cpf_cnpj_tomador.required' => 'O campo CPF/CNPJ é obrigatório',
+            'inscricao_municipal_tomador.required' => 'O campo Incrição Municipal é obrigatório.',
             'valorNota.required' => 'O campo Valor Nota é obrigatório.',
             'observacoes.max' => 'O campo Observações pode conter no máximo 255 caracteres.'
         ];

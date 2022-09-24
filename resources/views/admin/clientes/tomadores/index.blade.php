@@ -1,5 +1,10 @@
 <x-app-layout>
-    
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Dashboard') }}
+        </h2>
+    </x-slot>
+
     <x-breadCrumbs :breadCrumbs="$breadCrumbs" />
     <hr>
     
@@ -9,27 +14,25 @@
         </x-slot>                
     </x-datalist>
 
-    <x-clientes.container :clienteID="$id" active="tomadores">
-        <x-table class="rounded-xl my-1">
+    <x-clientes.container-retangle :clienteID="$id" active="tomadores">
+        <x-table>
             <x-slot name="columns">
-                <tr>
-                    <th class="w-1/6 color-header-table showDelete py-2">
-                        <input type="checkbox" id="selectAll" class="rounded-sm">
+                <tr class="bg-white border-b border-black">
+                    <th class="w-1/12 p-3 color-header-table showDelete">
+                        <input type="checkbox" id="selectAll">
                     </th>
-                    <th class="w-4/6 color-header-table">RAZÃO SOCIAL</th>
-                    <th class="w-1/6 color-header-table">CNPJ</th>
+                    <th class="w-7/12 color-header-table">RAZÃO SOCIAL</th>
+                    <th class="w-2/12 color-header-table">CNPJ</th>
                 </tr>
             </x-slot>
             <x-slot name="content">
                 @foreach ($clienteTomadores as $clienteTomador)
-                    <tr class="border-top">
-                        <td class="py-4">
-                            <input type="checkbox" class="select rounded-sm" value="{{ $clienteTomador->id }}">
+                    <tr class="bg-white border-b border-black">
+                        <td class="p-3">
+                            <input type="checkbox" class="select" value="{{ $clienteTomador->id }}">
                         </td>
-                        <td>
-                            <a class="hover:underline" href="{{ route('clientes.tomador.details', [$id, $clienteTomador->id]) }}">
-                            {{ $clienteTomador->nome }}
-                            </a>
+                        <td><a class="hover:underline"
+                                href="{{ route('clientes.tomador.details', [$id, $clienteTomador->id]) }}">{{ $clienteTomador->nome }}</a>
                         </td>
                         <td>{{ $clienteTomador->cpf_cnpj }}</td>
                     </tr>

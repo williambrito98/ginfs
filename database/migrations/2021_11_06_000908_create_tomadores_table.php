@@ -19,7 +19,7 @@ class CreateTomadoresTable extends Migration
             $table->string('cpf');
             $table->date('emissao');
             $table->date('data_cadastro');
-            $table->string('inscricao_municipal')->nullable();
+            $table->string('inscricao_municipal');
             $table->timestamps();
         });
     }

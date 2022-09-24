@@ -1,29 +1,8 @@
 {
-    "login": {
-        "btn_forma_acesso_cnpj": ".loginNfse form > fieldset > div > div > span:nth-child(2) input",
-        "cnpj": ".loginNfse form fieldset:nth-child(2) > div > div > div:nth-child(2) input",
-        "senha": ".loginNfse form fieldset:nth-child(2) > div > div > div:nth-child(4) input",
-        "entrar": ".loginNfse form > table > tbody > tr > td:nth-child(1) button"
-    },
     "btn_emitir": ".moldura tr td:nth-child(1) table tbody tr td table tbody tr:nth-child(2) div.x-panel-body div:nth-child(1) div:nth-child(2) div div:nth-child(1) a",
     "fieldsets_tomador": {
         "selector": ".medidaSelecione + fieldset div div fieldset",
         "title": ".medidaSelecione + fieldset div div fieldset:nth-child(:index) legend span"
-    },
-    "fieldsets_resumo": {
-        "selector": ".medidaInforme + div > div > div",
-        "sub_selector": "fieldset",
-        "prestacao_servico": {
-            "competencia": "div.x-fieldset-bwrap > div > div:nth-child(1) > div > div > div > div:nth-child(1) input"
-        },
-        "discrimicanao_servico":  {
-            "codigo_servico_atividade": "div.x-fieldset-bwrap > div > div:nth-child(1) > div > div > div > div:nth-child(1) input",
-            "aliquota": "div.x-fieldset-bwrap > div > div:nth-child(1) > div > div > div > div:nth-child(2) input",
-            "descricao_servico": "div.x-fieldset-bwrap > div > div:nth-child(2) textarea"
-        },
-        "valores": {
-            "valor_servico_prestado": "div.x-fieldset-bwrap > div > div > div > div > div > div input"
-        }
     },
     "tomador": {
         "inputSelector": ".medidaSelecione + fieldset div div fieldset:nth-child(1) div > div > table > tbody > tr:nth-child(2) input",
@@ -32,14 +11,12 @@
     "btn_next": ".centroBack > tbody > tr:nth-child(2) > td > table > tbody > tr > td:nth-child(2) > table > tbody > tr > td > table > tbody > tr > td > div > div:nth-child(2) > div > div > div > div > table:nth-child(2) button",
     "fieldsets_servicos": {
         "selector": ".medidaInforme + div form fieldset",
-        "title": ".medidaInforme + div form fieldset:nth-child(:index) > legend span",
-        "servicos_not_listed": ".medidaInforme + div form fieldset:nth-child(3) > div > div > div > div > div > div> div > div img",
-        "box_services_not_listed": "div.x-layer.x-combo-list"
+        "title": ".medidaInforme + div form fieldset:nth-child(:index) > legend span"
     },
     "competencia": {
         "day": {
             "input": ".medidaInforme + div form fieldset:nth-child(1) > div div.x-panel.x-panel-noborder.x-form-label-top.x-column:nth-child(1) input",
-            "index": "2"
+            "index": "0"
         },
         "month": {
             "input": ".medidaInforme + div form fieldset:nth-child(1) > div div.x-panel.x-panel-noborder.x-form-label-top.x-column:nth-child(2) input",
@@ -47,7 +24,7 @@
         },
         "year": {
             "input": ".medidaInforme + div form fieldset:nth-child(1) > div div.x-panel.x-panel-noborder.x-form-label-top.x-column:nth-child(3) input",
-            "index": "0"
+            "index": "2"
         },
         "select": "div.x-layer.x-combo-list"
     },

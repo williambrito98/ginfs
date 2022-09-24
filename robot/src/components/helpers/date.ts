@@ -7,6 +7,4 @@ export function formatDate (data: string, format: string, dateType: string) {
     const date = new Date(data.split('-').reverse().join('-'))
     return `${data.split('-')[0]}-${monthNames[date.getMonth()]}-${data.split('-')[2]}`
   }
-
-  return data
 }

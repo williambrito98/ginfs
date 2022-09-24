@@ -11,8 +11,6 @@ use App\Http\Controllers\Admin\ControllerFechamentoMensal;
 use App\Http\Controllers\Admin\ControllerFormulas;
 use App\Http\Controllers\Admin\ControllerClientes;
 use App\Http\Controllers\Admin\NotaFiscalController;
-use App\Http\Controllers\Admin\ControllerCidades;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,7 +24,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [Controller::class, 'login']);
+Route::get('/', function () {
+    return view('auth.login');
+});
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
 
@@ -38,7 +38,6 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::delete('/usuarios/destroy', [ControllerUser::class, 'destroy'])->name('usuarios.destroy');
 
-    Route::post('/usuarios/updateProfile/{id}', [ControllerUser::class, 'updateProfile'])->name('usuarios.updateProfile');;
     Route::resource('/usuarios', ControllerUser::class)->only(['index', 'create', 'store', 'update', 'edit', 'show']);
 
     Route::get('/papeis/permissoes/{id}', [ControllerRoles::class, 'permissions'])->name('papeis.permissoes');
@@ -73,7 +72,6 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::resource('/faturamento', ControllerFaturamentoClientes::class);
 
-    Route::delete('/formulas/removerEntrada', [ControllerFormulas::class, 'removerEntrada'])->name('formulas.removerEntrada');
     Route::resource('/formulas', ControllerFormulas::class);
 
     Route::get('/fechamentomensal/{idFaturamento}', [ControllerFechamentoMensal::class, 'encerrarFaturamentoMes'])->name('encerrarFaturamentoMes');
@@ -82,16 +80,12 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/autocomplete', [ControllerFaturamentoClientes::class, 'autocompleteSearch'])->name('autocomplete');
 
     Route::get('/faturamentoanual/{idCliente}', [ControllerFaturamentoClientes::class, 'getFaturamentoAnualFromCliente'])->name('getFaturamentoAnualFromCliente');
-    Route::get('/downloadNota/{id}', [NotaFiscalController::class, 'downloadNota'])->name('downloadNota');
+
 
     Route::resource('/solicitacao', NotaFiscalController::class);
     Route::post('/solicitacao/store', [NotaFiscalController::class, 'store'])->name('notafiscal.store');
     Route::get('/solicitacao/{idNotaFiscal}', [NotaFiscalController::class, 'show'])->name('notafiscal.show');
     Route::get('/autocompleteByCliente/{idCliente}', [TomadoresController::class, 'autocompleteSearchByCliente'])->name('autocompleteByCliente');
-
-    Route::delete('/cidades/destroy', [ControllerCidades::class, 'destroy'])->name('cidades.destroy');
-
-    Route::resource('/cidades', ControllerCidades::class)->only(['index', 'update', 'create', 'store', 'edit']);
 });
 
 

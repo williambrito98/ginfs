@@ -1,39 +1,38 @@
 <x-app-layout>
-    <x-title title="Tipos de Serviço" />
+    <x-title title="Tipos de Serviços" />
     <hr>
-
-    @if(Gate::check('adicionar-servicos') && Gate::check('deletar-servicos'))
-        <x-add-and-delete :routeAdd="route('servicos.create')" :routeDelete="route('servicos.destroy')" />
-    @endif
-
-    <x-table class="rounded-xl">
+    @can('adicionar-servicos')
+        <x-add-register :route="route('servicos.create')" />
+    @endcan
+    @can('deletar-servicos')
+        <x-delete-register :route="route('servicos.destroy')" />
+    @endcan
+    <x-table class="my-16">
         <x-slot name="columns">
-            <tr>
-                <th class="color-header-table showDelete py-2 pl-4">
-                    <input type="checkbox" id="selectAll" class="rounded-sm">
+            <tr class="bg-btn-dropdown-client">
+                <th class="w-1/4 p-3 color-header-table showDelete">
+                    <input type="checkbox" id="selectAll">
                 </th>
-                <th class="w-3/12 color-header-table">CÓDIGO</th>
-                <th class="w-6/12 color-header-table">DESCRIÇÃO</th>
-                <th class="w-3/12 color-header-table">ISS</th>
+                <th class="w-1/4 color-header-table">CÓDIGO</th>
+                <th class="w-1/4 color-header-table">SERVIÇO</th>
+                <th class="w-1/4 color-header-table">ISS</th>
             </tr>
         </x-slot>
 
         <x-slot name="content">
             @foreach ($servicos as $servico)
-                <tr class="border-top">
-                    <td class="py-10 pl-4">
-                        <input type="checkbox" class="select rounded-sm" value="{{ $servico->id }}">
+                <tr>
+                    <td class="p-3">
+                        <input type="checkbox" class="select" value="{{ $servico->id }}">
                     </td>
-                    <td>
-                        <a class="hover:underline" href="{{ route('servicos.edit', $servico->id) }}">
-                            {{ $servico->codigo }}
-                        </a>
+                    <td><a class="hover:underline"
+                            href="{{ route('servicos.edit', $servico->id) }}">{{ $servico->codigo }}</a></td>
                     <td>{{ $servico->nome }}</td>
                     <td>
                         @if ($servico->retencao_iss)
-                            <div class="bg-red-E32626  inline py-1 px-3 rounded-full">retido</div>
+                            <div class="bg-red-E32626  inline p-2 rounded-lg">RETIDO</div>
                         @else
-                            <div class="bg-green-56CA11 inline py-1 px-3 rounded-full">não retido</div>
+                            <div class="bg-green-56CA11 inline p-2 rounded-lg">NÃO RETIDO</div>
                         @endif
                     </td>
                 </tr>

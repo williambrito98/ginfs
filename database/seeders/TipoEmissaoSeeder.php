@@ -17,23 +17,18 @@ class TipoEmissaoSeeder extends Seeder
      */
     public function run()
     {
+        TipoEmissao::firstOrCreate([
+            'nome' => 'Normal',
+            'descricao' => 'Dia limite de correcao ate dia 30 do mes corrente',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
 
-        $this->createIfNotExists('nome', 'Normal', 'Dia limite de correcao ate dia 30 do mes corrente');
-        $this->createIfNotExists('nome', 'Seguradora', 'Dia limite de correcao ate dia 5 do mes seguinte');
-
-    }
-
-    public function createIfNotExists($key, $value, $description) {
-        $record = TipoEmissao::where($key, $value)->first();
-
-        if (!$record) {
-            TipoEmissao::firstOrCreate([
-                'nome' => $value,
-                'descricao' => $description,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ]);
-        }
-
+        TipoEmissao::firstOrCreate([
+            'nome' => 'Seguradora',
+            'descricao' => 'Dia limite de correcao ate dia 5 do mes seguinte',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
     }
 }

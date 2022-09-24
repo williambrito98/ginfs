@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateColumnIndicadorAtivoCidadesTable extends Migration
+class CreateColumnIndicarAtivoRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class CreateColumnIndicadorAtivoCidadesTable extends Migration
      */
     public function up()
     {
-        Schema::table('cidades', function (Blueprint $table) {
-            $table->char('indicador_ativo')->default('S');
+        Schema::table('roles', function (Blueprint $table) {
+            $table->char('indicar_ativo', 1)->default('S');
         });
     }
 
@@ -25,8 +25,6 @@ class CreateColumnIndicadorAtivoCidadesTable extends Migration
      */
     public function down()
     {
-        Schema::table('cidades', function (Blueprint $table) {
-            $table->dropColumn('indicador_ativo');
-        });
+        Schema::dropColumns('roles', ['indicador_ativo']);
     }
 }

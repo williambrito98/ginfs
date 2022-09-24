@@ -1,11 +1,10 @@
-@props(['route', 'userID', 'tomadorID'])
+@props(['route', 'userID'])
 
 <form method="POST" class="opacity-25" id="deleteIcon" action="{{ $route }}"
     enctype="multipart/form-data">
     @csrf
     @method('DELETE')
     <input type="hidden" value="{{ $userID ?? '' }}" name="userID">
-    <input type="hidden" value="{{ $tomadorID ?? '' }}" name="tomadorID">
     <select name="idItens[]" id="itensToDelete" multiple class="hidden">
     </select>
     <button type="submit" id="deletar" class="flex items-center text-btns mt-4">

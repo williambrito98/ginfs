@@ -82,10 +82,9 @@ class AppHelper
         $smallneedle = strtolower($needle);  // makes the needle lowercase, which essentially makes it case insensitive
         if (str_contains($smallhaystack, $smallneedle)) {  // compares the lowercase strings
             return true;  // returns true (wow)
+        } else {
+            return false;  // returns false (wow)
         }
-
-        return false;  // returns false (wow)
-
     }
 
     public static function generateSodiumKeybyteString()
@@ -116,18 +115,5 @@ class AppHelper
         $plaintext = sodium_crypto_secretbox_open($encrypted_result, $nonce, $key);
 
         return $plaintext;
-    }
-
-    public static function formatDate($date, $formatInput, $formatOutPut)
-    {
-        $monthNames = [
-            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-        ];
-        if ($formatOutPut === 'YY-MM-dd' && $formatInput === 'YY-mm-dd') {
-            $explodeDate = explode('-', $date);
-            $explodeDate[1] = $monthNames[$explodeDate[1] - 1];
-            return implode('-', $explodeDate);
-        }
     }
 }

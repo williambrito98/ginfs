@@ -41,12 +41,6 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
-        'notas' => [
-            'driver' => 'local',
-            'root' => storage_path('notas'),
-            'url' => env('APP_URL').'/storage/notas',
-            'visibility' => 'notas'
-        ],
 
         's3' => [
             'driver' => 's3',

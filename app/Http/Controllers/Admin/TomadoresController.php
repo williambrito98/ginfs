@@ -38,7 +38,7 @@ class TomadoresController extends Controller
             if (AppHelper::str_icontains($tomador->nome, $term)) {
                 array_push($registersFound, [
                     "id" => $tomador->id,
-                    "label" => $tomador->nome . ' - ' . $tomador->cpf_cnpj,
+                    "label" => $tomador->nome,
                     "nome" => $tomador->nome,
                     "cpf_cnpj" => $tomador->cpf_cnpj,
                     "inscricao_municipal" => $tomador->inscricao_municipal,
@@ -70,9 +70,20 @@ class TomadoresController extends Controller
         if (!empty($filterParameter)) {
             $listaDeTomadores = $this->indexFilter($filterParameter);
         } else {
-            $listaDeTomadores = Tomadores::where('indicador_exclusao', '!=', 'S')
-                ->sortable()
-                ->paginate($this->resultsPerPage);
+
+            if (AppHelper::isGerenteDoSistema()) {
+                $listaDeTomadores = Tomadores::where('indicador_exclusao', '!=', 'S')
+                    ->sortable()
+                    ->paginate($this->resultsPerPage);
+            } else {
+                $listaDeTomadores = Tomadores::select('tomadores.*', 'tipo_emissaos.nome as nome_emissao')
+                    ->join('users_tomadores', 'tomadores.id', '=', 'users_tomadores.tomadores_id')
+                    ->join('tipo_emissaos', 'tipo_emissaos.id', '=', 'tomadores.tipo_emissaos_id')
+                    ->where('users_tomadores.user_id', '=', Auth::user()->id)
+                    ->where('tomadores.indicador_exclusao', '!=', 'S')
+                    ->sortable()
+                    ->paginate($this->resultsPerPage);
+            }
         }
         return view('admin.tomadores.index', compact('listaDeTomadores'))->with('filter', $filterParameter);
     }
@@ -87,7 +98,7 @@ class TomadoresController extends Controller
         $tiposEmissao = TipoEmissao::all();
         $breadCrumbs = [
             ['url' => '/admin/tomadores', 'title' => 'Tomadores'],
-            ['url' => '', 'title' => 'Novo Tomador'],
+            ['url' => '', 'title' => 'Adicionar Tomador'],
         ];
         return view('admin.tomadores.create', compact('tiposEmissao', 'breadCrumbs'));
     }
@@ -114,6 +125,10 @@ class TomadoresController extends Controller
             $novoTomador->tipo_emissaos_id = $request->tipo_emissao;
             $novoTomador->indicador_exclusao = 'N';
             $novoTomador->save();
+
+            if (!AppHelper::isGerenteDoSistema()) {
+                $novoTomador->users()->attach(Auth::user());
+            }
 
             DB::commit();
         } catch (\PDOException $e) {
@@ -146,6 +161,10 @@ class TomadoresController extends Controller
             abort(403, 'Não Autorizado');
         }
 
+        if (!AppHelper::isGerenteDoSistema() && !Tomadores::isTomadorOwner(Auth::user()->id, $idTomador)) {
+            abort(403, 'Não Autorizado');
+        }
+
         $tomador = Tomadores::where('id', '=', $idTomador)
             ->where('indicador_exclusao', '!=', 'S')
             ->firstOrFail();
@@ -171,6 +190,14 @@ class TomadoresController extends Controller
         if (Gate::denies('editar-tomadores')) {
             abort(403, 'Não Autorizado');
         }
+
+        if (
+            !AppHelper::isGerenteDoSistema() &&
+            !Tomadores::isTomadorOwner(Auth::user()->id, $idTomador)
+        ) {
+            abort(403, 'Não Autorizado');
+        }
+
         try {
 
             $tomador = Tomadores::find($idTomador);
@@ -208,6 +235,12 @@ class TomadoresController extends Controller
             DB::beginTransaction();
 
             foreach ($request->idItens as $key => $value) {
+                if (
+                    !AppHelper::isGerenteDoSistema() &&
+                    !Tomadores::isTomadorOwner($currentUserId, $value)
+                ) {
+                    abort(403, 'Não Autorizado');
+                }
                 Tomadores::where("id", $value)->update([
                     'indicador_exclusao' => 'S'
                 ]);
@@ -227,13 +260,25 @@ class TomadoresController extends Controller
         $parameter = '%' . strtoupper($parameter) . '%';
         $listaDeTomadoresFiltro = [];
 
-        $listaDeTomadoresFiltro = Tomadores::where('nome', 'ILIKE', $parameter)
-            ->where('indicador_exclusao', '!=', 'S')
-            ->orWhere('cpf_cnpj', 'ILIKE', $parameter)
-            ->orWhere('inscricao_municipal', 'ILIKE', $parameter)
-            ->sortable()
-            ->paginate($this->resultsPerPage);
-
+        if (AppHelper::isGerenteDoSistema()) {
+            $listaDeTomadoresFiltro = Tomadores::where('nome', 'ILIKE', $parameter)
+                ->where('indicador_exclusao', '!=', 'S')
+                ->orWhere('cpf_cnpj', 'ILIKE', $parameter)
+                ->orWhere('inscricao_municipal', 'ILIKE', $parameter)
+                ->sortable()
+                ->paginate($this->resultsPerPage);
+        } else {
+            $listaDeTomadoresFiltro = Tomadores::select('tomadores.*', 'tipo_emissaos.nome as nome_emissao')
+                ->join('users_tomadores', 'tomadores.id', '=', 'users_tomadores.tomadores_id')
+                ->join('tipo_emissaos', 'tipo_emissaos.id', '=', 'tomadores.tipo_emissaos_id')
+                ->where('users_tomadores.user_id', '=', Auth::user()->id)
+                ->where('tomadores.indicador_exclusao', '!=', 'S')
+                ->orWhere('tomadores.nome', 'ILIKE', $parameter)
+                ->orWhere('tomadores.cpf_cnpj', 'ILIKE', $parameter)
+                ->orWhere('tomadores.inscricao_municipal', 'ILIKE', $parameter)
+                ->sortable()
+                ->paginate($this->resultsPerPage);
+        }
 
         return $listaDeTomadoresFiltro;
     }

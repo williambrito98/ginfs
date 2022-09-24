@@ -14,31 +14,6 @@ use App\Library\AppHelper;
 
 class ControllerFaturamentoClientes extends Controller
 {
-    public function autocompleteSearch(Request $request)
-    {
-        $registersFound = [];
-        $term = strtoupper($request->term);
-        $data = Clientes::where('razao_social', 'ILIKE', '%' . $term . '%')
-            ->whereNotNull('usuario_ginfs')
-            ->whereNotNull('senha_ginfs')
-            ->orWhere('cpf_cnpj', 'ILIKE', '%' . $term . '%')
-            ->orderBy('razao_social')
-            ->take(10)
-            ->get();
-
-        foreach ($data as $cliente) {
-            array_push($registersFound, [
-                "label" => $cliente->razao_social,
-                "id" => $cliente->id,
-                "razao_social" => $cliente->razao_social,
-                "cpf_cnpj" => $cliente->cpf_cnpj,
-                "inscricao_municipal" => $cliente->inscricao_municipal
-            ]);
-        }
-
-        return response()->json($registersFound);
-    }
-
     public function getFaturamentoAnualFromCliente($idCliente)
     {
         $registersFound = [];

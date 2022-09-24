@@ -18,6 +18,7 @@ export default async (page: Page, workerData: IworkerData) => {
   const fieldsets = await page.$$eval(SELECTORS.fieldsets_servicos.selector, elements => elements.length)
   for (let index = 1; index <= fieldsets; index++) {
     const title = await page.$eval(SELECTORS.fieldsets_servicos.title.replace(':index', index.toString()), element => element.textContent.trim())
+    console.log(title)
     if (objFactory[title]) await objFactory[title]()
   }
 }

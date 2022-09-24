@@ -1,7 +1,7 @@
 <x-app-layout>
-
-    <x-title title="Fechamento mensal" />
-    <hr class="mb-3">
+    <div class="mt-10 text-center text-lg">
+        <h2>Fechamento Mensal</h2>
+    </div>
 
     @if (count($errors) > 0)
         <ul>
@@ -19,62 +19,57 @@
         </div>
     @endif
 
-    <form class="form-control" method="GET">
-        <div class="flex justify-between items-center">
-            <div>
-                <input type="text" id="filter" name="filter" placeholder="Razão Social"
-                    class="form-control border border-black rounded focus:border-yellow-400 focus:ring-yellow-200"
-                    value="{{ $filter }}">
-            </div>
-
-            <div>
-                <input name="dataInicial" id="data-inicial" value="" type="text"
-                    class="form-control border border-black rounded focus:border-yellow-400 focus:ring-yellow-200"
-                    placeholder="Data inicial" />
-            </div>
-
-            <div>
-                <input name="dataFinal" id="data-final" value="" placeholder="Data final" type="text"
-                    class="form-control border border-black rounded focus:border-yellow-400 focus:ring-yellow-200" />
-            </div>
-
-            <x-button type="submit">Filtrar</x-button>
+    <form class="form-inline" method="GET">
+        <div class="form-group mb-2">
+            <label for="filter" class="col-sm-2 col-form-label">Filtro: </label>
+            <input type="text" class="form-control" id="filter" name="filter" placeholder="Razão Social"
+                value="{{ $filter }}">
         </div>
+
+        <label for="dataInicial">Data Inicial: </label>
+        <input name="dataInicial" id="data-inicial" class="form-control" style="display: inline;" value=""
+            placeholder="Data inicial" type="month" />
+
+        <label for="dataFinal">Data Final: </label>
+        <input name="dataFinal" id="data-final" class="form-control" style="display: inline;" value="" placeholder=""
+            type="month" />
+
+        <button type="submit" class="clear-both">Filtrar</button>
     </form>
 
-    <x-table class="rounded-xl">
+    <x-table>
         <x-slot name="columns">
-            <tr>
-                <th class="w-3/12 color-header-table py-2">@sortablelink('razaoSocial', 'PRESTADOR')</th>
-
-                <th class="w-2/12 color-header-table">@sortablelink('quantidade_emissoes', 'QNTD EMISSÕES')</th>
-                <th class="w-1/12 color-header-table">@sortablelink('valor_faturamento', 'EMISSÕES')</th>
-                <th class="w-2/12 color-header-table">@sortablelink('valor_faturamento_externo', 'FAT EXTERNO')</th>
-                <th class="w-1/12 color-header-table">@sortablelink('total_mes', 'TOTAL')</th>
-                <th class="w-1/12 color-header-table">@sortablelink('mes_ano_faturamento', 'MÊS')</th>
-                <th class="w-1/12 color-header-table">ALÍQUOTA</th>
-                <th class="w-1/12 color-header-table"></th>
+            <tr class="bg-btn-dropdown-client">
+                <th class="w-1/4 color-header-table">CNPJ/CPF</th>
+                <th class="w-1/4 color-header-table">@sortablelink('razaoSocial', 'Prestador')</th>
+                <th class="w-1/4 color-header-table">@sortablelink('mes_ano_faturamento', 'Mês')</th>
+                <th class="w-1/4 color-header-table">@sortablelink('quantidade_emissoes', 'Qntd. Emissões')</th>
+                <th class="w-1/4 color-header-table">@sortablelink('valor_faturamento', 'Faturamento Emissões pelo
+                    Sistema (R$)')</th>
+                <th class="w-1/4 color-header-table">@sortablelink('valor_faturamento_externo', 'Faturamento Ext. (R$)')
+                </th>
+                <th class="w-1/4 color-header-table">@sortablelink('total_mes', 'Total')</th>
+                <th class="w-1/4 color-header-table">Alíquota</th>
+                <th class="w-1/4 color-header-table"></th>
             </tr>
         </x-slot>
 
         <x-slot name="content">
             @foreach ($listaDeFaturamentos as $faturamento)
-                <tr class="border-top">
-                    <td class="py-2 px-1">{{ $faturamento->cliente->razao_social }}</td>
-                    <td>{{ $faturamento->quantidade_emissoes }}</td>
-                    <td>R$<br> {{ $faturamento->valor_faturamento }}</td>
-                    <td>R$<br> {{ $faturamento->valor_faturamento_externo }}</td>
-                    <td>R$<br> {{ $faturamento->total_mes }}</td>
+                <tr>
+                    <td>{{ $faturamento->cliente->cpf_cnpj }}</td>
+                    <td>{{ $faturamento->cliente->razao_social }}</td>
                     <td>
-                        {{ ucfirst(\Carbon\Carbon::createFromDate($faturamento->mes_ano_faturamento)->formatLocalized('%b')) }}
-                        <br>
-                        {{ ucfirst(\Carbon\Carbon::createFromDate($faturamento->mes_ano_faturamento)->formatLocalized('%Y')) }}
+                        {{ ucfirst(\Carbon\Carbon::createFromDate($faturamento->mes_ano_faturamento)->formatLocalized('%B/%Y')) }}
                     </td>
+                    <td>{{ $faturamento->quantidade_emissoes }}</td>
+                    <td>{{ $faturamento->valor_faturamento }}</td>
+                    <td>{{ $faturamento->valor_faturamento_externo }}</td>
+                    <td>{{ $faturamento->total_mes }}</td>
                     <td>{{ $faturamento->aliquota }}%</td>
                     <td>
                         @if ($faturamento->encerrado == 'N')
-                            <a class="underline cursor-pointer"
-                                href="{{ route('encerrarFaturamentoMes', $faturamento->id) }}">
+                            <a class="underline" href="{{ route('encerrarFaturamentoMes', $faturamento->id) }}">
                                 Encerrar
                             </a>
                         @else
@@ -85,31 +80,5 @@
             @endforeach
         </x-slot>
     </x-table>
-    <br>
     {{ $listaDeFaturamentos->appends(Request::except('page'))->render() }}
-
-    <script>
-        $(document).ready(function() {
-            $('#data-inicial').datepicker({
-                changeMonth: true,
-                changeYear: true,
-                showButtonPanel: true,
-                dateFormat: 'yy-mm',
-                onClose: function(dateText, inst) {
-                    $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
-                }
-            })
-
-            $('#data-final').datepicker({
-                changeMonth: true,
-                changeYear: true,
-                showButtonPanel: true,
-                dateFormat: 'yy-mm',
-                onClose: function(dateText, inst) {
-                    $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
-                }
-            })
-        })
-    </script>
-
 </x-app-layout>
