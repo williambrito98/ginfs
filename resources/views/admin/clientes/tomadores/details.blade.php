@@ -41,7 +41,7 @@
                         <input type="checkbox" id="selectAll" class="rounded-sm">
                     </th>
                     <th class="w-1/12 color-header-table">CÓDIGO</th>
-                    <th class="w-8/12 color-header-table">DESCRIÇÃO</th>
+                    <th class="w-8/12 color-header-table">ATIVIDADE</th>
                     <th class="w-3/12 color-header-table">ISS</th>
                 </tr>
             </x-slot>
@@ -52,7 +52,7 @@
                             <input type="checkbox" class="select rounded-sm" value="{{ $tomadorServico->id }}">
                         </td>
                         <td>{{ $tomadorServico->codigo }}</td>
-                        <td>{{ $tomadorServico->nome }}</td>
+                        <td>{{ $tomadorServico->cod_atividade }}</td>
                         <td class="rounded-br-xl">
                             @if ($tomadorServico->retencao_iss)
                                 <div class="bg-red-E32626  inline py-1 px-3 rounded-full">retido</div>

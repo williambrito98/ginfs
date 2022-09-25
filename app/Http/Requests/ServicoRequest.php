@@ -24,9 +24,17 @@ class ServicoRequest extends FormRequest
     public function rules()
     {
         return [
-            'nome' => 'required|string',
             'codigo' => 'required|numeric',
             'retencao_iss' => 'in:on,off'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'codigo.required' => 'O código é obrigatório',
+            'codigo.numeric' => 'O campo Código preciso ser numérico'
+        ];
+    }
+
 }

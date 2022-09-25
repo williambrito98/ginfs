@@ -343,7 +343,9 @@ class ControllerClientes extends Controller
         $user  = Clientes::select('users.id as userID', 'clientes.razao_social')
             ->join('users', 'users.cliente_id', '=', 'clientes.id')
             ->where('clientes.id', '=', $clienteID)->first();
-
+        foreach ($servicos as $key => $value) {
+            $servicos[$key]->nome = $value->codigo . " / " . $value->cod_atividade;
+        }
         $id = $clienteID;
         $userID = $user->userID;
         $tomador = Tomadores::find($tomadorID);

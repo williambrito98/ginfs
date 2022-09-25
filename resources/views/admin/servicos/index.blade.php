@@ -13,7 +13,7 @@
                     <input type="checkbox" id="selectAll" class="rounded-sm">
                 </th>
                 <th class="w-3/12 color-header-table">CÓDIGO</th>
-                <th class="w-6/12 color-header-table">DESCRIÇÃO</th>
+                <th class="w-6/12 color-header-table">ATIVIDADE</th>
                 <th class="w-3/12 color-header-table">ISS</th>
             </tr>
         </x-slot>
@@ -28,7 +28,7 @@
                         <a class="hover:underline" href="{{ route('servicos.edit', $servico->id) }}">
                             {{ $servico->codigo }}
                         </a>
-                    <td>{{ $servico->nome }}</td>
+                    <td>{{ $servico->cod_atividade }}</td>
                     <td>
                         @if ($servico->retencao_iss)
                             <div class="bg-red-E32626  inline py-1 px-3 rounded-full">retido</div>
