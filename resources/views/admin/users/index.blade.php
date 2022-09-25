@@ -8,7 +8,7 @@
         <x-table class="rounded-b-xl">
             <x-slot name="columns">
                 <tr>
-                    <th class="color-header-table showDelete py-2 pl-4">
+                    <th class="color-header-table showDelete py-2 px-4">
                         <input type="checkbox" id="selectAll" class="rounded-sm">
                     </th>
                     <th class="w-2/6 color-header-table">NOME</th>
@@ -19,16 +19,19 @@
 
             <x-slot name="content">
                 @foreach ($users as $user)
-                    <tr class="border-top">
-                        <td class="py-4 pl-4">
+                    <tr class="border-top hover:bg-gray-300 cursor-pointer">
+                        <td class="rounded-l-xl px-4 py-4">
                             <input type="checkbox" class="select rounded-sm" value="{{ $user->id }}">
                         </td>
-                        <td>
-                            <a href="{{ route('usuarios.edit', $user->id) }}"
-                                class="hover:underline">{{ $user->name }}</a>
+                        <td onClick="document.location.href='{{ route('usuarios.edit', $user->id) }}'">
+                            {{ $user->name }}
                         </td>
-                        <td>{{ $user?->email }}</td>
-                        <td>{{ $user->roles[0]->nome ?? '' }}</td>
+                        <td onClick="document.location.href='{{ route('usuarios.edit', $user->id) }}'">
+                            {{ $user?->email }}
+                        </td>
+                        <td class="rounded-r-xl" onClick="document.location.href='{{ route('usuarios.edit', $user->id) }}'">
+                            {{ $user->roles[0]->nome ?? '' }}
+                        </td>
                     </tr>
                 @endforeach
             </x-slot>

@@ -9,7 +9,7 @@
     <x-table class="rounded-xl">
         <x-slot name="columns">
             <tr>
-                <th class="color-header-table showDelete rounded-tl-xl pl-4 py-2">
+                <th class="color-header-table showDelete rounded-tl-xl px-4 py-2">
                     <input type="checkbox" id="selectAll" class="rounded-sm">
                 </th>
                 <th class="w-2/4 color-header-table">CIDADE</th>
@@ -19,13 +19,16 @@
 
         <x-slot name="content">
             @foreach ($cidades as $cidade)
-                <tr class="border-top">
-                    <td class="pl-4 py-4">
+                <tr class="border-top hover:bg-gray-300 cursor-pointer">
+                    <td class="rounded-l-xl px-4 py-4">
                         <input type="checkbox" class="select rounded-sm" value="{{ $cidade->id }}">
                     </td>
-                    <td><a class="hover:underline"
-                            href="{{ route('cidades.edit', $cidade->id) }}">{{ $cidade->nome }}</a></td>
-                    <td>{{ $cidade->url_ginfes }}</td>
+                    <td onClick="document.location.href='{{ route('cidades.edit', $cidade->id) }}'">
+                        {{ $cidade->nome }}
+                    </td>
+                    <td class="rounded-r-xl" onClick="document.location.href='{{ route('cidades.edit', $cidade->id) }}'">
+                        {{ $cidade->url_ginfes }}
+                    </td>
                 </tr>
             @endforeach
         </x-slot>

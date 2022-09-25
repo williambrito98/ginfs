@@ -9,7 +9,7 @@
     <x-table class="rounded-xl">
         <x-slot name="columns">
             <tr>
-                <th class="color-header-table showDelete py-2 pl-4">
+                <th class="color-header-table showDelete py-2 px-4">
                     <input type="checkbox" id="selectAll" class="rounded-sm">
                 </th>
                 <th class="w-2/6 color-header-table">CÓDIGO</th>
@@ -20,16 +20,17 @@
 
         <x-slot name="content">
             @foreach ($servicos as $servico)
-                <tr class="border-top">
-                    <td class="py-10 pl-4">
+                <tr class="border-top hover:bg-gray-300 cursor-pointer">
+                    <td class="rounded-l-xl px-4 py-4">
                         <input type="checkbox" class="select rounded-sm" value="{{ $servico->id }}">
                     </td>
-                    <td>
-                        <a class="hover:underline" href="{{ route('servicos.edit', $servico->id) }}">
-                            {{ $servico->codigo }}
-                        </a>
-                    <td>{{ $servico->cod_atividade }}</td>
-                    <td>
+                    <td onClick="document.location.href='{{ route('servicos.edit', $servico->id) }}'">
+                        {{ $servico->codigo }}
+                    </td>
+                    <td onClick="document.location.href='{{ route('servicos.edit', $servico->id) }}'">
+                        {{ $servico->cod_atividade }}
+                    </td>
+                    <td class="rounded-r-xl" onClick="document.location.href='{{ route('servicos.edit', $servico->id) }}'">
                         @if ($servico->retencao_iss)
                             <div class="bg-red-E32626  inline py-1 px-3 rounded-full">retido</div>
                         @else
