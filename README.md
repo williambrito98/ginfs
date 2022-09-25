@@ -85,13 +85,15 @@ Logar com o usuário postgres para que o console possa ser utilizado:
 
 <h2>Migração / Backup / Recuperação</h2>
 
-<p>>No caso de substituir a pasta atual, alguns arquivos precisam ser salvos e substituidos quando clonar o projeto:</p>
+<p>No caso de substituir a pasta atual, alguns arquivos precisam ser salvos e substituidos quando clonar o projeto:
+
 1. .env do projeto
 2. .env do robô
 3. .env da api
 
-<p>Também é necessário rodar:</p>
+Também é necessário rodar:
 - composer install do projeto
 - npm i do robô
 - npm i da api
+</p>
 
