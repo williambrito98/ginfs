@@ -16,7 +16,7 @@ class CreateServicosTable extends Migration
         Schema::create('servicos', function (Blueprint $table) {
             $table->id();
             $table->integer('codigo');
-            $table->string('nome');
+            $table->string('nome')->nullable(true);
             $table->boolean('rentencao_iss');
             $table->timestamps();
         });
