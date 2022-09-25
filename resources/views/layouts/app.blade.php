@@ -51,52 +51,52 @@
                             </div>
                             <div class="absolute hidden top-9 border bg-black transition rounded-lg border border-white text-white w-full h-auto z-50"
                                 id="sub-menu">
-                                <ul class="text-center rounded-lg">
-                                        <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition rounded-t-md">
-                                            <a href="{{ route('dashboard') }}">Dashboard</a>
+                                <ul class="text-center rounded-lg w-full">
+                                        <li class="text-sm hover:text-black hover:bg-yellow-300 transition rounded-t-md">
+                                            <a href="{{ route('dashboard') }}" class="block w-full py-2">Dashboard</a>
                                         </li>
-                                        <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition">
-                                            <a href="{{ route('solicitacao.index') }}">Solicitações</a>
+                                        <li class="text-sm hover:text-black hover:bg-yellow-300 transition">
+                                            <a href="{{ route('solicitacao.index') }}" class="block w-full py-2">Solicitações</a>
                                         </li>
                                     @can('ver-clientes')
-                                        <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition">
-                                            <a href="{{ route('clientes.index') }}">Clientes</a>
+                                        <li class="text-sm hover:text-black hover:bg-yellow-300 transition">
+                                            <a href="{{ route('clientes.index') }}" class="block w-full py-2">Clientes</a>
                                         </li>
                                     @endcan
                                     
                                     @can('ver-tomadores')
-                                        <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition">
-                                            <a href="{{ route('tomadores.index') }}">Tomadores</a>
+                                        <li class="text-sm hover:text-black hover:bg-yellow-300 transition">
+                                            <a href="{{ route('tomadores.index') }}" class="block w-full py-2">Tomadores</a>
                                         </li>
                                     @endcan
                                     @can('ver-servicos')
-                                        <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition">
-                                            <a href="{{ route('servicos.index') }}">Tipos de serviço</a>
+                                        <li class="text-sm hover:text-black hover:bg-yellow-300 transition">
+                                            <a href="{{ route('servicos.index') }}" class="block w-full py-2">Tipos de serviço</a>
                                         </li>
                                     @endcan
-                                    <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition">
-                                        <a href="{{ route('fechamentomensal.index') }}">Fechamento mensal</a>
+                                    <li class="text-sm hover:text-black hover:bg-yellow-300 transition">
+                                        <a href="{{ route('fechamentomensal.index') }}" class="block w-full py-2">Fechamento mensal</a>
                                     </li>
                                     @can('ver-cidades')
-                                        <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition">
-                                            <a href="{{ route('cidades.index') }}">Cidades</a>
+                                        <li class="text-sm hover:text-black hover:bg-yellow-300 transition">
+                                            <a href="{{ route('cidades.index') }}" class="block w-full py-2">Cidades</a>
                                         </li>
                                     @endcan
                                     @can('ver-formulas')
-                                        <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition">
-                                            <a href="{{ route('formulas.index') }}">Fórmulas</a>
+                                        <li class="text-sm hover:text-black hover:bg-yellow-300 transition">
+                                            <a href="{{ route('formulas.index') }}" class="block w-full py-2">Fórmulas</a>
                                         </li>
                                     @endcan
                                     @can('ver-usuarios')
-                                        <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition">
-                                            <a href="{{ route('usuarios.index') }}">Usuarios</a>
+                                        <li class="text-sm hover:text-black hover:bg-yellow-300 transition">
+                                            <a href="{{ route('usuarios.index') }}" class="block w-full py-2">Usuarios</a>
                                         </li>
                                     @endcan
-                                        <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition">
-                                            <a href="{{ route('usuarios.show', \Auth::user()->id) }}">Meu perfil</a>
+                                        <li class="text-sm hover:text-black hover:bg-yellow-300 transition">
+                                            <a href="{{ route('usuarios.show', \Auth::user()->id) }}" class="block w-full py-2">Meu perfil</a>
                                         </li>
                                         <li class="p-2 text-sm hover:text-black hover:bg-yellow-300 transition rounded-b-md">
-                                            <a href="{{ route('logout') }}">Logout</a>
+                                            <a href="{{ route('logout') }}" class="block w-full py-2">Logout</a>
                                         </li>
                                 </ul>
                             </div>
