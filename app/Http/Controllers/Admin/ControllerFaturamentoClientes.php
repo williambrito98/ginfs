@@ -119,8 +119,12 @@ class ControllerFaturamentoClientes extends Controller
                     ]
                 );
             }
+
+            $faturamentoAberto = FaturamentoClientes::where('clientes_id', $idCliente)->where('encerrado', 'N')->orderBy('id', 'desc')->first();
+            $faturamentoAberto->calcularAliquota();
+            $faturamentoAberto->save();
+
         } catch (\Exception $e) {
-            dd($e);
             throw new Exception('Ocorreu um erro ao cadastrar o faturamento.');
         }
     }
@@ -153,7 +157,6 @@ class ControllerFaturamentoClientes extends Controller
         try {
             FaturamentoClientes::insert($arrayRegistros);
         } catch (\Exception $e) {
-            dd($e);
             throw new Exception('Ocorreu um erro ao cadastrar o faturamento.');
         }
     }

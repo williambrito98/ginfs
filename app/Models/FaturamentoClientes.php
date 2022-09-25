@@ -95,10 +95,17 @@ class FaturamentoClientes extends Model
 
             $this->encerrado = 'S';
             $this->save();
-
+            $novaDataMesAno = (new DateTime($this->mes_ano_faturamento))
+                ->modify('+1 month')
+                ->format('Y-m-d H:i:s');
+            $novoFaturamento = FaturamentoClientes::where('mes_ano_faturamento', $novaDataMesAno)->first();
+            if (!$novoFaturamento) {
+                $novoFaturamento = new FaturamentoClientes();
+                $novoFaturamento->mes_ano_faturamento = $novaDataMesAno;
+            }
             /* Regra de negocio: ao encerrar um faturamento
             criar novo registro para o mes seguinte*/
-            $novoFaturamento = new FaturamentoClientes();
+            //$novoFaturamento = new FaturamentoClientes();
             $novoFaturamento->clientes_id = $this->clientes_id;
             $novoFaturamento->encerrado = 'N';
             $novoFaturamento->valor_faturamento_externo = 0;
@@ -106,12 +113,6 @@ class FaturamentoClientes extends Model
             $novoFaturamento->total_mes = 0;
             $novoFaturamento->quantidade_emissoes = 0;
             $novoFaturamento->calcularAliquota();
-
-            $novaDataMesAno = (new DateTime($this->mes_ano_faturamento))
-                ->modify('+1 month')
-                ->format('Y-m-d H:i:s');
-
-            $novoFaturamento->mes_ano_faturamento = $novaDataMesAno;
 
             $novoFaturamento->save();
             DB::commit();
@@ -159,12 +160,11 @@ class FaturamentoClientes extends Model
         try {
             FaturamentoClientes::insert($arrayRegistros);
         } catch (\Exception $e) {
-            dd($e);
             throw new Exception('Ocorreu um erro ao criar entradas do faturamento.');
         }
     }
 
-    protected function calcularAliquota()
+    public function calcularAliquota()
     {
         /*
         FT12 - Faturamento dos últimos 12 meses (ano calendário)
@@ -184,8 +184,8 @@ class FaturamentoClientes extends Model
         $ultimosDozeFaturamentos = FaturamentoClientes::where('clientes_id', '=', $this->clientes_id)
             ->where('encerrado', '=', 'S')
             ->limit(12)
+            ->orderBy('mes_ano_faturamento', 'desc')
             ->get();
-
         $valorTotalDozeFaturamentos = Money::BRL(0);
         foreach ($ultimosDozeFaturamentos as $faturamento) {
             if ($faturamento->total_mes != '0,00') {
