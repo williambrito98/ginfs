@@ -18,3 +18,5 @@ yarn-error.log
 /api-robot/dist
 /robot/dist
 /robot/out
+log
+*.pdf
