@@ -1,5 +1,5 @@
 import CreateBrowser from './CreateBrowser/CreateBrowser'
-import { workerData } from 'worker_threads'
+// import { workerData } from 'worker_threads'
 import SELECTORS from './selectors.json'
 import login from './components/login'
 import factoryTomador from './components/tomador/factory'
@@ -21,6 +21,19 @@ import { ConfirmDataServico } from './components/error/ConfirmDataServico'
 // import IworkerData from './interfaces/IworkerData'
 
 let COUNT = 1
+const workerData = {
+  identificacao: '40176697000170',
+  password: 'Plugin176697',
+  tomador: { cpfCnpj: '33448150000111' },
+  dataEmissao: '2022-Setembro-24',
+  servico: { codigo: '1001', atividade: '662230000', descricao: 'teste' },
+  aliquota: '2',
+  valor: '0.01',
+  userID: '32',
+  url: 'https://uphold.hubbots.net/api/saveStatus',
+  notaID: '22',
+  urlCidade: 'https://santoandre.ginfes.com.br/'
+}
 
 async function main () {
   config({ path: join(parse(__dirname).dir, '.env') })
@@ -50,6 +63,11 @@ async function main () {
     if (textButtonNextStep !== 'Emitir Nfse') {
       await page.click(SELECTORS.btn_next_step).catch(e => '')
       await page.waitForTimeout(5000)
+      const modalNotaEmitida = await page.$eval('#ext-comp-1011 > div:nth-child(2) > div > div > div > div > div > div:nth-child(2)', element => element.textContent.trim()).catch(e => 'ok')
+      if (modalNotaEmitida.includes('Não foi possível enviar a nota')) {
+        throw new EmissaoNotaError(modalNotaEmitida)
+      }
+
       await factoryResumo(page, workerData)
       await page.click(SELECTORS.btn_emitir_nota).catch(e => '')
       await page.waitForTimeout(5000)
