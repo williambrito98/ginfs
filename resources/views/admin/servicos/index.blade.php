@@ -12,9 +12,9 @@
                 <th class="color-header-table showDelete py-2 pl-4">
                     <input type="checkbox" id="selectAll" class="rounded-sm">
                 </th>
-                <th class="w-3/12 color-header-table">CÓDIGO</th>
-                <th class="w-6/12 color-header-table">ATIVIDADE</th>
-                <th class="w-3/12 color-header-table">ISS</th>
+                <th class="w-2/6 color-header-table">CÓDIGO</th>
+                <th class="w-2/6 color-header-table">ATIVIDADE</th>
+                <th class="w-2/6 color-header-table">ISS</th>
             </tr>
         </x-slot>
 

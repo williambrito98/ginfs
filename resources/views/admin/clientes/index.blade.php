@@ -12,10 +12,9 @@
                 <th class="color-header-table showDelete pl-4 py-2">
                     <input type="checkbox" id="selectAll" class="rounded-sm">
                 </th>
-                <th class="w-4/12 color-header-table">RAZÃO SOCIAL</th>
-                <th class="w-3/12 color-header-table">CNPJ</th>
-                <th class="w-3/12 color-header-table">E-MAIL</th>
-                <th class="w-2/12 color-header-table">INSC MUNICIPAL</th>
+                <th class="w-2/6 color-header-table">CNPJ</th>
+                <th class="w-2/6 color-header-table">RAZÃO SOCIAL</th>
+                <th class="w-2/6 color-header-table">E-MAIL</th>
             </tr>
         </x-slot>
 
@@ -25,17 +24,14 @@
                     <td class="pl-4 py-8">
                         <input type="checkbox" class="select rounded-sm" value="{{ $cliente->id }}">
                     </td>
+                    <td>{{ $cliente->cpf_cnpj }}</td>
                     <td>
                         <a class="hover:underline"
                             href="{{ route('clientes.edit', $cliente->id) }}">
                             {{ $cliente->razao_social }}
                         </a>
                     </td>
-                    <td>{{ $cliente->cpf_cnpj }}</td>
                     <td>{{ $cliente->email }}</td>
-                    <td>
-                        {{ $cliente->inscricao_municipal }}
-                    </td>
                 </tr>
             @endforeach
         </x-slot>
