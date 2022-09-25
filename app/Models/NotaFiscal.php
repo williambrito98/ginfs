@@ -14,7 +14,7 @@ class NotaFiscal extends Model
 
     protected $table = 'nota_fiscal';
 
-    protected $fillable = ['valor', 'user_id', 'cliente_id', 'tomador_id', 'status_nota_fiscal', 'data_emissao'];
+    protected $fillable = ['valor', 'user_id', 'cliente_id', 'tomador_id', 'status_nota_fiscal', 'data_emissao', 'console'];
 
     protected static function boot()
     {

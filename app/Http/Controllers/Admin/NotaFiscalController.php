@@ -222,11 +222,11 @@ class NotaFiscalController extends Controller
         if ($nota) {
             $nota->status_nota_fiscal_id = $request->statusNota;
             $nota->numero = $request->numeroNota;
+            $nota->console = $request->statusMessages;
             $nota->save();
             return response()->json([
                 "message" => "Status alterado com sucesso"
             ], 201);
-            //FaturamentoClientes::setFaturamento($request->id_cliente, $request->valor);
         }
 
         return response()->json([

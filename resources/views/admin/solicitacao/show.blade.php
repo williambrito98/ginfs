@@ -1,10 +1,10 @@
 <x-app-layout>
-    
+
     <x-breadCrumbs :breadCrumbs="$breadCrumbs" />
     <hr class="mb-3">
 
     <x-container :tabs="[['url' => '', 'active' => '', 'title' => 'DETALHES DA SOLICITAÇÃO']]">
-    
+
         <!-- Name -->
         <div class="relative">
             <x-form.label for="nome_cliente" value="EMISSOR" />
@@ -13,7 +13,7 @@
 
         <div class="grid grid-cols-2 gap-x-32">
             <!-- cpf_cnpj -->
-            <div> 
+            <div>
                 <x-form.label for="cpf_cnpj" value="CPF/CNPJ" />
                 <x-form.input class="w-80 bg-grey-darker" name="cpf_cnpj" type="text" value="{{ $solicitacao->cliente->cpf_cnpj }}" readonly />
             </div>
@@ -76,6 +76,20 @@
                 {{ $solicitacao->observacoes }}
             </textarea>
         </div>
+
+        @if($solicitacao->status_nota_fiscal_id === 1 || $solicitacao->status_nota_fiscal_id === 4)
+        <!-- Console -->
+        <div class="relative">
+            <x-form.label for="console" value="CONSOLE" />
+            <div class="w-full border-input h-48 overflow-auto border-white rounded focus:border-yellow-400 focus:ring-yellow-200 bg-grey-darker" type="text" name="console" readonly>
+                @foreach(explode('|', $solicitacao->console) as $key => $log)
+                    <p class="p-2">{{$log}}</p>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+
 
 
             <div class="flex justify-between items-center">

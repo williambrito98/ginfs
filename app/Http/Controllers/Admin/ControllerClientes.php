@@ -211,6 +211,11 @@ class ControllerClientes extends Controller
                 $usuarioApi->usuario = $cpf_cnpj_limpo;
                 $usuarioApi->senha = $user->password;
                 $usuarioApi->save();
+            } else {
+                $usuarioApi = new UsuarioApi();
+                $usuarioApi->usuario = $cpf_cnpj_limpo;
+                $usuarioApi->senha = $user->password;
+                $usuarioApi->save();
             }
 
             User::where('cliente_id', $id)->update(['name' => $request->nome, 'email' => $request->email]);
