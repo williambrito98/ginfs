@@ -23,20 +23,12 @@
     <x-form.input class="w-full bg-grey-darker" id="cpf_cnpj-tomador" data-mask-for-cpf-cnpj type="text" name="cpf_cnpj_tomador" value="{{ $tomador->cpf_cnpj ?? old('cpf_cnpj_tomador') }}" readonly required />
 </div>
 
-<!-- Servico -->
-<div>
-    <x-form.label for="tipoServico" value="TIPO DE SERVIÇO" />
-    <select id="tipo-servico" class="w-full border-input border-white rounded focus:border-yellow-400 focus:ring-yellow-200" name="tipoServico" value="{{old('tipoServico') ?? ''}}" readonly required>
-    </select>
-</div>
-
-<br />
-
 <div class="grid grid-cols-2 gap-x-32">
-    <!-- Valor -->
+    <!-- Servico -->
     <div>
-        <x-form.label for="valor_nota" value="VALOR NOTA (R$)" />
-        <x-form.input class="w-80" id="valor-nota" name="valorNota" type="text" value="{{old('valorNota') ?? ''}}" autofocus/>
+        <x-form.label for="tipoServico" value="TIPO DE SERVIÇO" />
+        <select id="tipo-servico" class="w-80 border-input border-white rounded focus:border-yellow-400 focus:ring-yellow-200" name="tipoServico" value="{{old('tipoServico') ?? ''}}" readonly required>
+        </select>
     </div>
 
     <!-- Data Emissao -->
@@ -51,18 +43,27 @@
     </div>
 </div>
 
-<!-- Observacoes -->
-<div class="relative">
-    <x-form.label for="observacoes" value="OBSERVAÇÕES" />
-    <textarea type="text" id="observacoes" class="w-full border-input border-white rounded focus:border-yellow-400 focus:ring-yellow-200" rows="5" maxlength="255" name="observacoes">{{old('observacoes') ?? ''}}</textarea>
-    <div id="count">
-        <span id="current_count">0</span>
-        <span id="maximum_count">/ 255</span>
+<div class="grid grid-cols-2 gap-x-32">
+    <!-- Valor -->
+    <div>
+        <x-form.label for="valor_nota" value="VALOR NOTA (R$)" />
+        <x-form.input class="w-80" id="valor-nota" name="valorNota" type="text" value="{{old('valorNota') ?? ''}}" autofocus/>
     </div>
-    @error('observacoes')
-        <p class="text-red-500">{{ $message }}</p>
-    @enderror
+
+    <!-- Observacoes -->
+    <div>
+        <x-form.label for="observacoes" value="OBSERVAÇÕES" />
+        <textarea type="text" id="observacoes" class="w-80 border-input border-white rounded focus:border-yellow-400 focus:ring-yellow-200" rows="1" maxlength="255" name="observacoes">{{old('observacoes') ?? ''}}</textarea>
+        <div id="count">
+            <span id="current_count">0</span>
+            <span id="maximum_count">/ 255</span>
+        </div>
+        @error('observacoes')
+            <p class="text-red-500">{{ $message }}</p>
+        @enderror
+    </div>
 </div>
+
 
 <input type="hidden" name="idCliente" id='id-cliente' value="{{ old('idCliente') ?? '' }}" readonly>
 <input type="hidden" name="idTomador" id='id-tomador' value="{{ old('idTomador') ?? '' }}" readonly>

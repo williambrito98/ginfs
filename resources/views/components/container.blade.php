@@ -13,7 +13,7 @@
                 </div>
             @endif
         @endforeach
-        <div class="max-w-screen-md mx-auto">
+        <div class="max-w-screen-md mx-auto py-2">
             {{ $slot ?? '' }}
         </div>
     </div>

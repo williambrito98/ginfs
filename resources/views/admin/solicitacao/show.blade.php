@@ -11,18 +11,10 @@
             <x-form.input class="w-full bg-grey-darker" name="nome_cliente" type="text" value="{{ $solicitacao->cliente->razao_social }}" readonly />
         </div>
 
-        <div class="grid grid-cols-2 gap-x-32">
-            <!-- cpf_cnpj -->
-            <div>
-                <x-form.label for="cpf_cnpj" value="CPF/CNPJ" />
-                <x-form.input class="w-80 bg-grey-darker" name="cpf_cnpj" type="text" value="{{ $solicitacao->cliente->cpf_cnpj }}" readonly />
-            </div>
-
-            <!-- inscricao_municipal -->
-            <div>
-                <x-form.label for="inscricao_municipal" value="INSCRIÇÃO MUNICIPAL" />
-                <x-form.input class="w-80 bg-grey-darker" name="inscricao_municipal" type="text" value="{{ $solicitacao->cliente->inscricao_municipal }}" readonly />
-            </div>
+        <!-- cpf_cnpj -->
+        <div>
+            <x-form.label for="cpf_cnpj" value="CPF/CNPJ" />
+            <x-form.input class="w-full bg-grey-darker" name="cpf_cnpj" type="text" value="{{ $solicitacao->cliente->cpf_cnpj }}" readonly />
         </div>
 
         <!-- Nome Tomador -->
@@ -31,35 +23,17 @@
             <x-form.input type="text" class="w-full bg-grey-darker" name="busca-tomador" value="{{ $solicitacao->tomador->nome }}" readonly />
         </div>
 
-        <div class="grid grid-cols-2 gap-x-32">
-            <!-- cpf_cnpj Tomador -->
-            <div>
-                <x-form.label for="cpf_cnpj_tomador" value="CPF/CNPJ" />
-                <x-form.input class="w-80 bg-grey-darker" type="text" name="cpf_cnpj_tomador" value="{{ $solicitacao->tomador->cpf_cnpj }}" readonly />
-            </div>
-
-            <!-- inscricao_municipal Tomador -->
-            <div>
-                <x-form.label for="inscricao_municipal_tomador" value="INSCRIÇÃO MUNICIPAL" />
-                <x-form.input class="w-80 bg-grey-darker" type="text" name="inscricao_municipal_tomador" value="{{ $solicitacao->tomador->inscricao_municipal }}" readonly />
-            </div>
-        </div>
-
-        <!-- Servico -->
+        <!-- cpf_cnpj Tomador -->
         <div>
-            <x-form.label for="tipoServico" value="TIPO DE SERVIÇO" />
-            <textarea class="w-full border-input border-white rounded focus:border-yellow-400 focus:ring-yellow-200 bg-grey-darker" type="text" name="tipoServico" rows="5" maxlength="255" readonly>
-                {{$solicitacao->servico->nome}}
-            </textarea>
+            <x-form.label for="cpf_cnpj_tomador" value="CPF/CNPJ" />
+            <x-form.input class="w-full bg-grey-darker" type="text" name="cpf_cnpj_tomador" value="{{ $solicitacao->tomador->cpf_cnpj }}" readonly />
         </div>
 
-        <br />
-
-        <div class="grid grid-cols-2 gap-x-32">
-            <!-- Valor -->
+        <div class="grid grid-cols-2 gap-32">
+            <!-- Servico -->
             <div>
-                <x-form.label for="valor_nota" value="VALOR NOTA (R$)" />
-                <x-form.input class="w-80 bg-grey-darker" type="text" name="valorNota" value="{{ $solicitacao->valor }}" readonly/>
+                <x-form.label for="tipoServico" value="TIPO DE SERVIÇO" />
+                <x-form.input class="w-80 bg-grey-darker" type="text" name="cpf_cnpj_tomador" value="{{$solicitacao->servico->nome}}" readonly />
             </div>
 
             <!-- Data Emissao -->
@@ -69,21 +43,29 @@
             </div>
         </div>
 
-        <!-- Observacoes -->
-        <div class="relative">
-            <x-form.label for="observacoes" value="OBSERVAÇÕES" />
-            <textarea class="w-full border-input border-white rounded focus:border-yellow-400 focus:ring-yellow-200 bg-grey-darker" type="text" name="observacoes" rows="5" maxlength="255" readonly>
-                {{ $solicitacao->observacoes }}
-            </textarea>
-        </div>
+        <div class="grid grid-cols-2 gap-x-32">
+            <!-- Valor -->
+            <div>
+                <x-form.label for="valor_nota" value="VALOR NOTA (R$)" />
+                <x-form.input class="w-80 bg-grey-darker" type="text" name="valorNota" value="{{ $solicitacao->valor }}" readonly/>
+            </div>
+
+            <!-- Observacoes -->
+            <div>
+                <x-form.label for="observacoes" value="OBSERVAÇÕES" />
+                <textarea class="w-80 border-input border-white rounded focus:border-yellow-400 focus:ring-yellow-200 bg-grey-darker" type="text" name="observacoes" rows="1" maxlength="255" readonly>
+                    {{ $solicitacao->observacoes }}
+                </textarea>
+            </div>
+        </div>      
 
         @if($solicitacao->status_nota_fiscal_id === 1 || $solicitacao->status_nota_fiscal_id === 4)
         <!-- Console -->
         <div class="relative">
             <x-form.label for="console" value="CONSOLE" />
-            <div class="w-full border-input h-48 overflow-auto border-white rounded focus:border-yellow-400 focus:ring-yellow-200 bg-grey-darker" type="text" name="console" readonly>
+            <div class="w-full border-input h-48 overflow-auto border-white rounded focus:border-yellow-400 focus:ring-yellow-200 bg-gray-800" type="text" name="console" readonly>
                 @foreach(explode('|', $solicitacao->console) as $key => $log)
-                    <p class="p-2">{{$log}}</p>
+                    <p class="p-2 text-white">{{$log}}</p>
                 @endforeach
             </div>
         </div>
