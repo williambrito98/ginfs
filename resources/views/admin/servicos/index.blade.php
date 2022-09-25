@@ -32,9 +32,9 @@
                     </td>
                     <td class="rounded-r-xl" onClick="document.location.href='{{ route('servicos.edit', $servico->id) }}'">
                         @if ($servico->retencao_iss)
-                            <div class="bg-red-E32626  inline py-1 px-3 rounded-full">retido</div>
+                            <div class="bg-red  inline py-1 px-3 rounded-full">retido</div>
                         @else
-                            <div class="bg-green-56CA11 inline py-1 px-3 rounded-full">não retido</div>
+                            <div class="bg-green inline py-1 px-3 rounded-full">não retido</div>
                         @endif
                     </td>
                 </tr>

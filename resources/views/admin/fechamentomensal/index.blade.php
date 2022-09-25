@@ -20,22 +20,23 @@
     @endif
 
     <form class="form-control" method="GET">
-        <div class="flex justify-between items-center">
-            <div>
+        <div class="flex justify-between items-center space-x-6">
+            <div class="flex-basis-70">
                 <input type="text" id="filter" name="filter" placeholder="Razão Social"
-                    class="form-control border border-black rounded focus:border-yellow-400 focus:ring-yellow-200"
+                    class="form-control border border-black rounded focus:border-yellow-400 focus:ring-yellow-200 w-full"
                     value="{{ $filter }}">
             </div>
 
-            <div>
+            <div class="flex-basis-15">
                 <input name="dataInicial" id="data-inicial" value="" type="text"
-                    class="form-control border border-black rounded focus:border-yellow-400 focus:ring-yellow-200"
+                    class="form-control border border-black rounded focus:border-yellow-400 focus:ring-yellow-200 w-full"
                     placeholder="Data inicial" />
             </div>
 
-            <div>
-                <input name="dataFinal" id="data-final" value="" placeholder="Data final" type="text"
-                    class="form-control border border-black rounded focus:border-yellow-400 focus:ring-yellow-200" />
+            <div class="flex-basis-15">
+                <input name="dataFinal" id="data-final" value="" type="text"
+                    class="form-control border border-black rounded focus:border-yellow-400 focus:ring-yellow-200 w-full"
+                    placeholder="Data final" />
             </div>
 
             <x-button type="submit">Filtrar</x-button>
@@ -73,12 +74,14 @@
                     <td>{{ $faturamento->aliquota }}%</td>
                     <td>
                         @if ($faturamento->encerrado == 'N')
-                            <a class="underline cursor-pointer"
+                            <a class="cursor-pointer text-red"
                                 href="{{ route('encerrarFaturamentoMes', $faturamento->id) }}">
                                 Encerrar
                             </a>
                         @else
-                            Encerrado
+                            <a class="text-green">
+                                Encerrado
+                            </a>
                         @endif
                     </td>
                 </tr>
