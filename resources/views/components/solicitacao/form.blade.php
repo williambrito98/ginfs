@@ -44,7 +44,7 @@
         <x-form.label for="dataEmissao" value="DATA DE EMISSÃO" />
         <x-form.input
             class="w-80"
-            name="dataEmissao" 
+            name="dataEmissao"
             id="data-emissao"
             value="{{\Carbon\Carbon::now()->format('Y-m-d')}}"
             type="date"/>
@@ -134,9 +134,9 @@
                     });
 
                     ui.item.listaDeServicos.forEach(element => {
-                        $('#tipo-servico').append(createOption(element.id, `${element.codigo} - ${element.nome.substring(0,90)}`));
+                        $('#tipo-servico').append(createOption(element.id, `${element.codigo} - ${element.cod_atividade}`));
                     });
-                    
+
                     return false;
                 }
             },
